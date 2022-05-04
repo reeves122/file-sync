@@ -14,7 +14,7 @@ import (
 	"time"
 )
 
-const sourceRepo = "github.com/champ-oss/terraform-module-template"
+const sourceRepo = "https://github.com/champ-oss/terraform-module-template"
 const sourceRepoTmp = "/tmp/source"
 
 func main() {
@@ -22,6 +22,9 @@ func main() {
 		URL:      sourceRepo,
 		Progress: os.Stdout,
 	})
+	if err != nil {
+		panic(err)
+	}
 
 	r, err := git.PlainOpen("./")
 	if err != nil {
