@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing/object"
+	"github.com/go-git/go-git/v5/plumbing/transport/http"
 	"github.com/google/go-github/v44/github"
 	"golang.org/x/oauth2"
 	"io/ioutil"
@@ -110,10 +111,10 @@ func main() {
 	err = r.Push(&git.PushOptions{
 		//RemoteName: "origin",
 		Progress: os.Stdout,
-		//Auth: &http.BasicAuth{
-		//	Username: os.Getenv("GITHUB_TOKEN"),
-		//	Password: os.Getenv("GITHUB_TOKEN"),
-		//},
+		Auth: &http.BasicAuth{
+			Username: "testuser",
+			Password: os.Getenv("GITHUB_TOKEN"),
+		},
 	})
 	if err != nil {
 		panic(err)
