@@ -15,6 +15,11 @@ import (
 )
 
 func main() {
+	_, err := git.PlainClone("/tmp/source", false, &git.CloneOptions{
+		URL:      "https://github.com/champ-oss/terraform-module-template",
+		Progress: os.Stdout,
+	})
+
 	r, err := git.PlainOpen("./")
 	if err != nil {
 		panic(err)
@@ -35,12 +40,27 @@ func main() {
 		panic(err)
 	}
 
-	err = ioutil.WriteFile("./test-file.txt", []byte("test"), 0644)
+	//err = ioutil.WriteFile("./test-file.txt", []byte("test"), 0644)
+	//if err != nil {
+	//	panic(err)
+	//}
+	//
+	//_, err = w.Add("test-file.txt")
+
+	input, err := ioutil.ReadFile("/tmp/source/.tflint.hcl")
 	if err != nil {
 		panic(err)
 	}
 
-	_, err = w.Add("test-file.txt")
+	err = ioutil.WriteFile(".tflint.hcl", input, 0644)
+	if err != nil {
+		panic(err)
+	}
+
+	_, err = w.Add(".tflint.hcl")
+	if err != nil {
+		panic(err)
+	}
 
 	status, err := w.Status()
 	if err != nil {
