@@ -32,6 +32,15 @@ func main() {
 		panic(err)
 	}
 
+	remotes, err := r.Remotes()
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("remotes:")
+	for _, remote := range remotes {
+		fmt.Println(remote)
+	}
+
 	err = r.CreateBranch(&config.Branch{
 		Name: "test",
 	})
