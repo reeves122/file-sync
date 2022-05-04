@@ -118,9 +118,9 @@ func main() {
 
 	fmt.Println("pushing")
 	err = r.Push(&git.PushOptions{
-		RemoteName: "origin",
-		RefSpecs:   []config.RefSpec{"test:refs/heads/test"},
-		Progress:   os.Stdout,
+		//RemoteName: "origin",
+		RefSpecs: []config.RefSpec{"refs/heads/test:refs/heads/test"},
+		Progress: os.Stdout,
 		Auth: &http.BasicAuth{
 			Username: "testuser",
 			Password: os.Getenv("GITHUB_TOKEN"),
