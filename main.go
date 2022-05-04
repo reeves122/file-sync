@@ -15,35 +15,10 @@ import (
 )
 
 func main() {
-	//r, err := git.PlainClone("./foo", false, &git.CloneOptions{
-	//	URL:      "https://github.com/go-git/go-git",
-	//	Progress: os.Stdout,
-	//})
-	//r, err := git.PlainClone("./foo", false, &git.CloneOptions{
-	//	Auth: &http.BasicAuth{
-	//		Username: "abc123",
-	//		Password: os.Getenv("GITHUB_TOKEN"),
-	//	},
-	//	URL:      "./",
-	//	Progress: os.Stdout,
-	//})
 	r, err := git.PlainOpen("./")
 	if err != nil {
 		panic(err)
 	}
-
-	//err = r.DeleteRemote("origin")
-	//if err != nil {
-	//	panic(err)
-	//}
-	//
-	//_, err = r.CreateRemote(&config.RemoteConfig{
-	//	Name: "origin",
-	//	URLs: []string{fmt.Sprintf("https://filesync:%s@github.com/reeves122/file-sync", os.Getenv("GITHUB_TOKEN"))},
-	//})
-	//if err != nil {
-	//	panic(err)
-	//}
 
 	remotes, err := r.Remotes()
 	if err != nil {
@@ -53,13 +28,6 @@ func main() {
 	for _, remote := range remotes {
 		fmt.Println(remote)
 	}
-
-	//err = r.CreateBranch(&config.Branch{
-	//	Name: "test",
-	//})
-	//if err != nil {
-	//	panic(err)
-	//}
 
 	w, err := r.Worktree()
 	if err != nil {
@@ -117,8 +85,6 @@ func main() {
 
 	fmt.Println("pushing")
 	err = r.Push(&git.PushOptions{
-		//RemoteName: "origin",
-		//RefSpecs: []config.RefSpec{"refs/heads/test:refs/heads/test"},
 		Progress: os.Stdout,
 		Auth: &http.BasicAuth{
 			Username: "testuser",
@@ -136,12 +102,6 @@ func main() {
 	tc := oauth2.NewClient(context.Background(), ts)
 
 	client := github.NewClient(tc)
-	//branches, resp, err := client.Repositories.ListBranches(context.Background(), "reeves122", "file-sync", &github.BranchListOptions{})
-	//if err != nil {
-	//	panic(err)
-	//}
-	//fmt.Println(resp)
-	//fmt.Println(branches)
 	_, resp, err := client.PullRequests.Create(context.Background(), "reeves122", "file-sync", &github.NewPullRequest{
 		Title: github.String("file sync"),
 		Head:  github.String("test"),
