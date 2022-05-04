@@ -1,11 +1,16 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/config"
 	"github.com/go-git/go-git/v5/plumbing/object"
+	"github.com/go-git/go-git/v5/plumbing/transport/http"
+	"github.com/google/go-github/v44/github"
+	"golang.org/x/oauth2"
 	"io/ioutil"
+	"os"
 	"time"
 )
 
@@ -14,7 +19,14 @@ func main() {
 	//	URL:      "https://github.com/go-git/go-git",
 	//	Progress: os.Stdout,
 	//})
-	r, err := git.PlainOpen("./")
+	r, err := git.PlainClone("./foo", false, &git.CloneOptions{
+		Auth: &http.BasicAuth{
+			Username: "abc123",
+			Password: os.Getenv("GITHUB_TOKEN"),
+		},
+		URL:      "./",
+		Progress: os.Stdout,
+	})
 	if err != nil {
 		panic(err)
 	}
@@ -26,7 +38,7 @@ func main() {
 		panic(err)
 	}
 
-	err = ioutil.WriteFile("test-file.txt", []byte("test"), 0644)
+	err = ioutil.WriteFile("./foo/test-file.txt", []byte("test"), 0644)
 	if err != nil {
 		panic(err)
 	}
@@ -64,4 +76,17 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
+	ts := oauth2.StaticTokenSource(
+		&oauth2.Token{AccessToken: os.Getenv("GITHUB_TOKEN")},
+	)
+	tc := oauth2.NewClient(context.Background(), ts)
+
+	client := github.NewClient(tc)
+	branches, resp, err := client.Repositories.ListBranches(context.Background(), "reeves122", "file-sync", &github.BranchListOptions{})
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(resp)
+	fmt.Println(branches)
 }
