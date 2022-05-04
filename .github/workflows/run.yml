@@ -2,10 +2,6 @@ on:
   workflow_dispatch:
   push:
 
-permissions:
-  contents: write
-  pull-requests: write
-
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

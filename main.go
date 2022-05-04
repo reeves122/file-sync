@@ -20,15 +20,6 @@ func main() {
 		panic(err)
 	}
 
-	remotes, err := r.Remotes()
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println("remotes:")
-	for _, remote := range remotes {
-		fmt.Println(remote)
-	}
-
 	w, err := r.Worktree()
 	if err != nil {
 		panic(err)
