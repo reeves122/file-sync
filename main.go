@@ -32,6 +32,19 @@ func main() {
 		panic(err)
 	}
 
+	err = r.DeleteRemote("origin")
+	if err != nil {
+		panic(err)
+	}
+
+	_, err = r.CreateRemote(&config.RemoteConfig{
+		Name: "origin",
+		URLs: []string{fmt.Sprintf("https://filesync:%s@github.com/reeves122/file-sync", os.Getenv("GITHUB_TOKEN"))},
+	})
+	if err != nil {
+		panic(err)
+	}
+
 	remotes, err := r.Remotes()
 	if err != nil {
 		panic(err)
