@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/config"
+	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/object"
 	"github.com/go-git/go-git/v5/plumbing/transport/http"
 	"github.com/google/go-github/v44/github"
@@ -68,8 +69,9 @@ func main() {
 
 	fmt.Println("checkout test branch")
 	err = w.Checkout(&git.CheckoutOptions{
-		Branch: "test",
+		Branch: plumbing.NewBranchReferenceName("test"),
 		Create: true,
+		Keep:   true,
 	})
 	if err != nil {
 		panic(err)
