@@ -4,9 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/go-git/go-git/v5"
-	"github.com/go-git/go-git/v5/config"
 	"github.com/go-git/go-git/v5/plumbing/object"
-	"github.com/go-git/go-git/v5/plumbing/transport/http"
 	"github.com/google/go-github/v44/github"
 	"golang.org/x/oauth2"
 	"io/ioutil"
@@ -32,18 +30,18 @@ func main() {
 		panic(err)
 	}
 
-	err = r.DeleteRemote("origin")
-	if err != nil {
-		panic(err)
-	}
-
-	_, err = r.CreateRemote(&config.RemoteConfig{
-		Name: "origin",
-		URLs: []string{fmt.Sprintf("https://filesync:%s@github.com/reeves122/file-sync", os.Getenv("GITHUB_TOKEN"))},
-	})
-	if err != nil {
-		panic(err)
-	}
+	//err = r.DeleteRemote("origin")
+	//if err != nil {
+	//	panic(err)
+	//}
+	//
+	//_, err = r.CreateRemote(&config.RemoteConfig{
+	//	Name: "origin",
+	//	URLs: []string{fmt.Sprintf("https://filesync:%s@github.com/reeves122/file-sync", os.Getenv("GITHUB_TOKEN"))},
+	//})
+	//if err != nil {
+	//	panic(err)
+	//}
 
 	remotes, err := r.Remotes()
 	if err != nil {
@@ -54,19 +52,28 @@ func main() {
 		fmt.Println(remote)
 	}
 
-	err = r.CreateBranch(&config.Branch{
-		Name: "test",
+	//err = r.CreateBranch(&config.Branch{
+	//	Name: "test",
+	//})
+	//if err != nil {
+	//	panic(err)
+	//}
+
+	w, err := r.Worktree()
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println("checkout test branch")
+	err = w.Checkout(&git.CheckoutOptions{
+		Branch: "test",
+		Create: true,
 	})
 	if err != nil {
 		panic(err)
 	}
 
 	err = ioutil.WriteFile("./test-file.txt", []byte("test"), 0644)
-	if err != nil {
-		panic(err)
-	}
-
-	w, err := r.Worktree()
 	if err != nil {
 		panic(err)
 	}
@@ -101,12 +108,12 @@ func main() {
 
 	fmt.Println("pushing")
 	err = r.Push(&git.PushOptions{
-		RemoteName: "origin",
-		Progress:   os.Stdout,
-		Auth: &http.BasicAuth{
-			Username: "abc123",
-			Password: os.Getenv("GITHUB_TOKEN"),
-		},
+		//RemoteName: "origin",
+		Progress: os.Stdout,
+		//Auth: &http.BasicAuth{
+		//	Username: os.Getenv("GITHUB_TOKEN"),
+		//	Password: os.Getenv("GITHUB_TOKEN"),
+		//},
 	})
 	if err != nil {
 		panic(err)
