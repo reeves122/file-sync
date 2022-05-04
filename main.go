@@ -19,14 +19,15 @@ func main() {
 	//	URL:      "https://github.com/go-git/go-git",
 	//	Progress: os.Stdout,
 	//})
-	r, err := git.PlainClone("./foo", false, &git.CloneOptions{
-		Auth: &http.BasicAuth{
-			Username: "abc123",
-			Password: os.Getenv("GITHUB_TOKEN"),
-		},
-		URL:      "./",
-		Progress: os.Stdout,
-	})
+	//r, err := git.PlainClone("./foo", false, &git.CloneOptions{
+	//	Auth: &http.BasicAuth{
+	//		Username: "abc123",
+	//		Password: os.Getenv("GITHUB_TOKEN"),
+	//	},
+	//	URL:      "./",
+	//	Progress: os.Stdout,
+	//})
+	r, err := git.PlainOpen("./")
 	if err != nil {
 		panic(err)
 	}
@@ -38,7 +39,7 @@ func main() {
 		panic(err)
 	}
 
-	err = ioutil.WriteFile("./foo/test-file.txt", []byte("test"), 0644)
+	err = ioutil.WriteFile("./test-file.txt", []byte("test"), 0644)
 	if err != nil {
 		panic(err)
 	}
@@ -77,7 +78,12 @@ func main() {
 	fmt.Println(obj)
 
 	fmt.Println("pushing")
-	err = r.Push(&git.PushOptions{})
+	err = r.Push(&git.PushOptions{
+		Auth: &http.BasicAuth{
+			Username: "abc123",
+			Password: os.Getenv("GITHUB_TOKEN"),
+		},
+	})
 	if err != nil {
 		panic(err)
 	}
