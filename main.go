@@ -108,6 +108,12 @@ func main() {
 	}
 	fmt.Println(obj)
 
+	ref, err := r.Head()
+	fmt.Println("ref:", ref)
+	if err != nil {
+		panic(err)
+	}
+
 	fmt.Println("pushing")
 	err = r.Push(&git.PushOptions{
 		RemoteName: "origin",
