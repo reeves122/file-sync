@@ -57,6 +57,7 @@ func main() {
 
 	fmt.Printf("git status: \n%s\n", status)
 
+	fmt.Println("making commit")
 	commit, err := w.Commit("test commit", &git.CommitOptions{
 		Author: &object.Signature{
 			Name:  "file-sync",
@@ -64,24 +65,30 @@ func main() {
 			When:  time.Now(),
 		},
 	})
-
-	obj, err := r.CommitObject(commit)
 	if err != nil {
 		panic(err)
 	}
 
+	fmt.Println("getting commit")
+	obj, err := r.CommitObject(commit)
+	if err != nil {
+		panic(err)
+	}
 	fmt.Println(obj)
 
+	fmt.Println("pushing")
 	err = r.Push(&git.PushOptions{})
 	if err != nil {
 		panic(err)
 	}
 
+	fmt.Println("creating github client")
 	ts := oauth2.StaticTokenSource(
 		&oauth2.Token{AccessToken: os.Getenv("GITHUB_TOKEN")},
 	)
 	tc := oauth2.NewClient(context.Background(), ts)
 
+	fmt.Println("listing branches")
 	client := github.NewClient(tc)
 	branches, resp, err := client.Repositories.ListBranches(context.Background(), "reeves122", "file-sync", &github.BranchListOptions{})
 	if err != nil {
