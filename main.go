@@ -14,9 +14,12 @@ import (
 	"time"
 )
 
+const sourceRepo = "github.com/champ-oss/terraform-module-template"
+const sourceRepoTmp = "/tmp/source"
+
 func main() {
-	_, err := git.PlainClone("/tmp/source", false, &git.CloneOptions{
-		URL:      "https://github.com/champ-oss/terraform-module-template",
+	_, err := git.PlainClone(sourceRepoTmp, false, &git.CloneOptions{
+		URL:      sourceRepo,
 		Progress: os.Stdout,
 	})
 
@@ -39,13 +42,6 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-
-	//err = ioutil.WriteFile("./test-file.txt", []byte("test"), 0644)
-	//if err != nil {
-	//	panic(err)
-	//}
-	//
-	//_, err = w.Add("test-file.txt")
 
 	input, err := ioutil.ReadFile("/tmp/source/.tflint.hcl")
 	if err != nil {
