@@ -59,4 +59,9 @@ func main() {
 	}
 
 	fmt.Println(obj)
+
+	err = r.Push(&git.PushOptions{})
+	if err != nil {
+		panic(err)
+	}
 }
