@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"github.com/go-git/go-git/v5"
-	"github.com/go-git/go-git/v5/config"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/object"
 	"github.com/go-git/go-git/v5/plumbing/transport/http"
@@ -119,7 +118,7 @@ func main() {
 	fmt.Println("pushing")
 	err = r.Push(&git.PushOptions{
 		//RemoteName: "origin",
-		RefSpecs: []config.RefSpec{"refs/heads/test:refs/heads/test"},
+		//RefSpecs: []config.RefSpec{"refs/heads/test:refs/heads/test"},
 		Progress: os.Stdout,
 		Auth: &http.BasicAuth{
 			Username: "testuser",
