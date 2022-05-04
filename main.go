@@ -88,6 +88,8 @@ func main() {
 
 	fmt.Println("pushing")
 	err = r.Push(&git.PushOptions{
+		RemoteName: "origin",
+		Progress:   os.Stdout,
 		Auth: &http.BasicAuth{
 			Username: "abc123",
 			Password: os.Getenv("GITHUB_TOKEN"),
