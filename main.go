@@ -135,12 +135,20 @@ func main() {
 	)
 	tc := oauth2.NewClient(context.Background(), ts)
 
-	fmt.Println("listing branches")
 	client := github.NewClient(tc)
-	branches, resp, err := client.Repositories.ListBranches(context.Background(), "reeves122", "file-sync", &github.BranchListOptions{})
+	//branches, resp, err := client.Repositories.ListBranches(context.Background(), "reeves122", "file-sync", &github.BranchListOptions{})
+	//if err != nil {
+	//	panic(err)
+	//}
+	//fmt.Println(resp)
+	//fmt.Println(branches)
+	_, resp, err := client.PullRequests.Create(context.Background(), "reeves122", "file-sync", &github.NewPullRequest{
+		Title: github.String("file sync"),
+		Head:  github.String("test"),
+		Base:  github.String("main"),
+	})
 	if err != nil {
 		panic(err)
 	}
 	fmt.Println(resp)
-	fmt.Println(branches)
 }
