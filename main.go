@@ -67,9 +67,14 @@ func main() {
 		log.Fatal(err)
 	}
 
-	if _, err := createCommit(worktree, commitMsg, user, email); err != nil {
+	hash, err := createCommit(worktree, commitMsg, user, email)
+	if err != nil {
 		log.Fatal(err)
 	}
+
+	commit, err := repo.CommitObject(hash)
+	fmt.Println(commit.Files())
+	fmt.Println(commit.String())
 
 	if err := gitPush(repo, user, os.Getenv("GITHUB_TOKEN")); err != nil {
 		log.Fatal(err)
