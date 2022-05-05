@@ -89,7 +89,7 @@ func main() {
 	client := github.NewClient(tc)
 	_, resp, err := client.PullRequests.Create(context.Background(), "reeves122", "file-sync", &github.NewPullRequest{
 		Title: github.String("file sync"),
-		Head:  github.String("test"),
+		Head:  github.String("file-sync"),
 		Base:  github.String("main"),
 	})
 	if err != nil {
