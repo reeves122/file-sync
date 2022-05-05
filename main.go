@@ -24,8 +24,8 @@ const email = "file-sync@example.com"
 
 var files = []string{
 	".tflint.hcl",
-	".github/CODEOWNERS",
-	".github/workflows/release.yml",
+	"LICENSE",
+	"test/src/go.mod",
 }
 
 func main() {
