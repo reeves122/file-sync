@@ -25,7 +25,7 @@ const email = "file-sync@example.com"
 var files = []string{
 	".tflint.hcl",
 	".github/CODEOWNERS",
-	//".github/workflows/release.yml",
+	".github/workflows/release.yml",
 }
 
 func main() {
@@ -41,13 +41,17 @@ func main() {
 		log.Fatal(err)
 	}
 
-	if err := copySourceFiles(files, sourceDir, localRepoDir); err != nil {
-		log.Fatal(err)
-	}
-
 	worktree, err := repo.Worktree()
 	if err != nil {
 		log.Fatal("error getting the worktree for the local repository", err)
+	}
+
+	if err := checkOutBranch(branchName, worktree); err != nil {
+		log.Fatal(err)
+	}
+
+	if err := copySourceFiles(files, sourceDir, localRepoDir); err != nil {
+		log.Fatal(err)
 	}
 
 	modified, err := isWorktreeModified(worktree)
@@ -57,10 +61,6 @@ func main() {
 	if !modified {
 		log.Info("all files are up to date")
 		os.Exit(0)
-	}
-
-	if err := checkOutBranch(branchName, worktree); err != nil {
-		log.Fatal(err)
 	}
 
 	if err := gitAddFiles(files, worktree); err != nil {
