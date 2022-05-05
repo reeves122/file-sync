@@ -297,19 +297,3 @@ func Test_gitPush_Success(t *testing.T) {
 	err = gitPush(repo, testUser, testGithubToken)
 	assert.NoError(t, err)
 }
-
-//func Test_branchExists(t *testing.T) {
-//	// Clone and open an example git repository
-//	repoDir, err := cloneSourceRepo("https://github.com/git-fixtures/basic.git")
-//	defer removeDir(repoDir)
-//	repo, err := openLocalRepo(repoDir)
-//	assert.NoError(t, err)
-//
-//	exists, err := branchExists(repo, "foo")
-//	assert.False(t, exists)
-//	assert.NoError(t, err)
-//
-//	exists, err = branchExists(repo, "master")
-//	assert.True(t, exists)
-//	assert.NoError(t, err)
-//}
