@@ -279,7 +279,7 @@ func Test_gitPush_Success(t *testing.T) {
 	assert.NoError(t, err)
 
 	// Write a new file in the git repository
-	err = ioutil.WriteFile(filepath.Join(localRepoDir, "foo-new-file.txt"), []byte("test"), 0644)
+	err = ioutil.WriteFile(filepath.Join(localRepoDir, "foo-new-file.txt"), []byte("test123"), 0644)
 	assert.NoError(t, err)
 
 	// Git add and commit
