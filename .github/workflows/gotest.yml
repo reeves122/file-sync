@@ -2,8 +2,7 @@ on:
   workflow_dispatch:
   push:
 
-permissions:
-  actions: write
+permissions: write-all
 
 jobs:
   gotest:
