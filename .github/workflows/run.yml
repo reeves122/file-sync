@@ -18,7 +18,7 @@ permissions:
   statuses: write
 
 env:
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  GITHUB_TOKEN: ${{ secrets.FILE_SYNC_PAT }}
 
 jobs:
   run:

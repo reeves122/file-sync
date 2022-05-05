@@ -92,6 +92,8 @@ func Test_copyFile_Bad_Destination(t *testing.T) {
 	assert.Error(t, copyFile(sourceFile, "/foo/invalid.txt"))
 }
 
+func Test_copyFile_Nested_Directory(t *testing.T) {}
+
 func Test_copySourceFiles_Success(t *testing.T) {
 	// Write a test file to a test source directory
 	sourceDir, _ := ioutil.TempDir("", "source")
