@@ -8,101 +8,71 @@ import (
 	"github.com/go-git/go-git/v5/plumbing/object"
 	"github.com/go-git/go-git/v5/plumbing/transport/http"
 	"github.com/google/go-github/v44/github"
+	log "github.com/sirupsen/logrus"
 	"golang.org/x/oauth2"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"time"
 )
 
-const sourceRepo = "https://github.com/champ-oss/terraform-module-template"
-const sourceRepoTmp = "/tmp/source"
+const localRepoDir = "./"
+const branchName = "file-sync"
+const commitMsg = "file-sync"
+const user = "file-sync"
+const email = "file-sync@example.com"
+
+var files = []string{
+	".tflint.hcl",
+	".github/CODEOWNERS",
+	".github/workflows/release.yml",
+}
 
 func main() {
-	_, err := git.PlainClone(sourceRepoTmp, false, &git.CloneOptions{
-		URL:      sourceRepo,
-		Progress: os.Stdout,
-	})
+	log.SetLevel(log.DebugLevel)
+
+	sourceDir, err := cloneSourceRepo("https://github.com/champ-oss/terraform-module-template")
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
-	r, err := git.PlainOpen("./")
+	repo, err := openLocalRepo(localRepoDir)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
-	w, err := r.Worktree()
-	if err != nil {
-		panic(err)
+	if err := copySourceFiles(files, sourceDir, localRepoDir); err != nil {
+		log.Fatal(err)
 	}
 
-	fmt.Println("checkout test branch")
-	err = w.Checkout(&git.CheckoutOptions{
-		Branch: plumbing.NewBranchReferenceName("test"),
-		Create: true,
-		Keep:   true,
-	})
+	worktree, err := repo.Worktree()
 	if err != nil {
-		panic(err)
+		log.Fatal("error getting the worktree for the local repository", err)
 	}
 
-	input, err := ioutil.ReadFile("/tmp/source/.tflint.hcl")
+	modified, err := isWorktreeModified(worktree)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
+	}
+	if !modified {
+		log.Info("all files are up to date")
+		os.Exit(0)
 	}
 
-	err = ioutil.WriteFile(".tflint.hcl", input, 0644)
-	if err != nil {
-		panic(err)
+	if err := checkOutBranch(branchName, worktree); err != nil {
+		log.Fatal(err)
 	}
 
-	_, err = w.Add(".tflint.hcl")
-	if err != nil {
-		panic(err)
+	if err := gitAddFiles(files, worktree); err != nil {
+		log.Fatal(err)
 	}
 
-	status, err := w.Status()
-	if err != nil {
-		panic(err)
+	if _, err := createCommit(worktree, commitMsg, user, email); err != nil {
+		log.Fatal(err)
 	}
 
-	fmt.Printf("git status: \n%s\n", status)
-
-	fmt.Println("making commit")
-	commit, err := w.Commit("test commit", &git.CommitOptions{
-		Author: &object.Signature{
-			Name:  "file-sync",
-			Email: "file-sync@example.com",
-			When:  time.Now(),
-		},
-	})
-	if err != nil {
-		panic(err)
-	}
-
-	fmt.Println("getting commit")
-	obj, err := r.CommitObject(commit)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println(obj)
-
-	ref, err := r.Head()
-	fmt.Println("ref:", ref)
-	if err != nil {
-		panic(err)
-	}
-
-	fmt.Println("pushing")
-	err = r.Push(&git.PushOptions{
-		Progress: os.Stdout,
-		Auth: &http.BasicAuth{
-			Username: "testuser",
-			Password: os.Getenv("GITHUB_TOKEN"),
-		},
-	})
-	if err != nil {
-		panic(err)
+	if err := gitPush(repo, user, os.Getenv("GITHUB_TOKEN")); err != nil {
+		log.Fatal(err)
 	}
 
 	fmt.Println("creating github client")
@@ -121,4 +91,119 @@ func main() {
 		panic(err)
 	}
 	fmt.Println(resp)
+}
+
+func cloneSourceRepo(sourceRepo string) (dir string, err error) {
+	log.Debug("Creating temp directory for source repository")
+	dir, _ = ioutil.TempDir("", "source")
+
+	log.Infof("Cloning source repository %s to %s", sourceRepo, dir)
+	if _, err := git.PlainClone(dir, false, &git.CloneOptions{URL: sourceRepo, Progress: os.Stdout}); err != nil {
+		log.Error("error cloning source repository")
+		return dir, err
+	}
+	return dir, nil
+}
+
+func openLocalRepo(path string) (repo *git.Repository, err error) {
+	log.Infof("Opening local repository: %s", path)
+	repo, err = git.PlainOpen(path)
+	if err != nil {
+		log.Error("error opening local directory as git repository")
+		return nil, err
+	}
+	return repo, nil
+}
+
+func copySourceFiles(files []string, sourceDir, destDir string) error {
+	for _, f := range files {
+		sourcePath := filepath.Join(sourceDir, f)
+		destPath := filepath.Join(destDir, f)
+		log.Debugf("Copying %s to %s", sourcePath, destPath)
+		if err := copyFile(sourcePath, destPath); err != nil {
+			log.Error("error copying files from source")
+			return err
+		}
+	}
+	return nil
+}
+
+func copyFile(source, dest string) error {
+	input, err := ioutil.ReadFile(source)
+	if err != nil {
+		return err
+	}
+
+	err = ioutil.WriteFile(dest, input, 0644)
+	return err
+}
+
+func isWorktreeModified(worktree *git.Worktree) (bool, error) {
+	status, err := worktree.Status()
+	if err != nil {
+		log.Error("error running git status")
+		return false, err
+	}
+	log.Info("git status")
+	fmt.Print(status)
+	return !status.IsClean(), nil
+}
+
+func checkOutBranch(branchName string, worktree *git.Worktree) error {
+	log.Infof("Checking out branch: %s", branchName)
+	err := worktree.Checkout(&git.CheckoutOptions{
+		Branch: plumbing.NewBranchReferenceName(branchName),
+		Create: true,
+		Keep:   true,
+	})
+	if err != nil {
+		log.Errorf("error checking out branch: %s", branchName)
+		return err
+	}
+	return nil
+}
+
+func gitAddFiles(files []string, worktree *git.Worktree) error {
+	for _, f := range files {
+		log.Debugf("git add %s", f)
+		if _, err := worktree.Add(f); err != nil {
+			log.Errorf("error running git add %s", f)
+			return err
+		}
+	}
+	return nil
+}
+
+func createCommit(worktree *git.Worktree, msg, name, email string) (plumbing.Hash, error) {
+	log.Infof("Creating commit as user %s", name)
+	hash, err := worktree.Commit(msg, &git.CommitOptions{
+		Author: &object.Signature{
+			Name:  name,
+			Email: email,
+			When:  time.Now(),
+		},
+	})
+	if err != nil {
+		log.Error("error creating commit")
+		return hash, err
+	}
+	log.Infof("Created commit: %s", hash)
+	return hash, nil
+}
+
+func gitPush(repo *git.Repository, username, password string) error {
+	log.Info("Running git push")
+	err := repo.Push(&git.PushOptions{
+		Progress: os.Stdout,
+		Auth: &http.BasicAuth{
+			Username: username,
+			Password: password,
+		},
+	})
+	if err != nil {
+		log.Error("error running git push")
+		return err
+	}
+	log.Infof("Successfully pushed")
+	return nil
 }
