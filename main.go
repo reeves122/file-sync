@@ -13,6 +13,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 )
 
@@ -46,7 +47,7 @@ func main() {
 		log.Fatal("error getting the worktree for the local repository", err)
 	}
 
-	if err := checkOutBranch(branchName, worktree); err != nil {
+	if err := checkOutBranch(worktree, branchName); err != nil {
 		log.Fatal(err)
 	}
 
@@ -139,6 +140,12 @@ func copyFile(source, dest string) error {
 		return err
 	}
 
+	baseDir, _ := filepath.Split(dest)
+	err = os.MkdirAll(baseDir, os.ModePerm)
+	if err != nil {
+		return err
+	}
+
 	err = ioutil.WriteFile(dest, input, 0644)
 	return err
 }
@@ -154,15 +161,30 @@ func isWorktreeModified(worktree *git.Worktree) (bool, error) {
 	return !status.IsClean(), nil
 }
 
-func checkOutBranch(branchName string, worktree *git.Worktree) error {
+func checkOutBranch(worktree *git.Worktree, branchName string) error {
 	log.Infof("Checking out branch: %s", branchName)
 	err := worktree.Checkout(&git.CheckoutOptions{
 		Branch: plumbing.NewBranchReferenceName(branchName),
 		Create: true,
 		Keep:   true,
 	})
+
+	if err != nil && strings.Contains(err.Error(), "already exists") {
+
+		log.Debugf("Branch already exists. Switching to existing branch: %s", branchName)
+		if err := worktree.Checkout(&git.CheckoutOptions{
+			Branch: plumbing.NewBranchReferenceName(branchName),
+			Create: false,
+			Keep:   true,
+		}); err != nil {
+			return err
+		} else {
+			return nil
+		}
+	}
+
 	if err != nil {
-		log.Errorf("error checking out branch: %s", branchName)
+		log.Errorf("Error checking out branch: %s", branchName)
 		return err
 	}
 	return nil

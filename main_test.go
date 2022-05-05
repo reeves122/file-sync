@@ -9,6 +9,11 @@ import (
 	"testing"
 )
 
+var testBranch = "integration-test"
+var testGithubToken = os.Getenv("GITHUB_TOKEN")
+var testUser = "integration-test"
+var testEmail = "integration-test@example.com"
+
 func init() {
 	log.SetLevel(log.DebugLevel)
 }
@@ -20,7 +25,6 @@ func removeDir(dir string) {
 }
 
 func Test_cloneSourceRepo_Success(t *testing.T) {
-	t.Parallel()
 	repoDir, err := cloneSourceRepo("https://github.com/git-fixtures/basic.git")
 	defer removeDir(repoDir)
 	assert.NoError(t, err)
@@ -30,7 +34,6 @@ func Test_cloneSourceRepo_Success(t *testing.T) {
 }
 
 func Test_cloneSourceRepo_Error(t *testing.T) {
-	t.Parallel()
 	repoDir, err := cloneSourceRepo("https://localhost/not-a-repo")
 	defer removeDir(repoDir)
 	assert.Error(t, err)
@@ -40,14 +43,12 @@ func Test_cloneSourceRepo_Error(t *testing.T) {
 }
 
 func Test_openLocalRepo_Success(t *testing.T) {
-	t.Parallel()
 	repo, err := openLocalRepo("./")
 	assert.NoError(t, err)
 	assert.NotNil(t, repo)
 }
 
 func Test_openLocalRepo_Error(t *testing.T) {
-	t.Parallel()
 	repo, err := openLocalRepo(os.TempDir())
 	assert.Error(t, err)
 	assert.Nil(t, repo)
@@ -92,7 +93,27 @@ func Test_copyFile_Bad_Destination(t *testing.T) {
 	assert.Error(t, copyFile(sourceFile, "/foo/invalid.txt"))
 }
 
-func Test_copyFile_Nested_Directory(t *testing.T) {}
+func Test_copyFile_Create_Dir(t *testing.T) {
+	// Write a test file to a test source directory
+	sourceDir, _ := ioutil.TempDir("", "source")
+	defer removeDir(sourceDir)
+	sourceFile := filepath.Join(sourceDir, "test.txt")
+	err := ioutil.WriteFile(sourceFile, []byte("test"), 0644)
+	assert.NoError(t, err)
+	_, err = os.Stat(sourceFile)
+	assert.NoError(t, err)
+
+	// Create a test destination directory
+	destDir, _ := ioutil.TempDir("", "dest")
+	defer removeDir(destDir)
+
+	// Use a nested directory that does not exist
+	destFile := filepath.Join(destDir, "somedirectory", "test.txt")
+	// Copy file and check if it exists in destination
+	assert.NoError(t, copyFile(sourceFile, destFile))
+	_, err = os.Stat(destFile)
+	assert.NoError(t, err)
+}
 
 func Test_copySourceFiles_Success(t *testing.T) {
 	// Write a test file to a test source directory
@@ -167,7 +188,7 @@ func Test_isWorktreeModified_Clean(t *testing.T) {
 	assert.False(t, modified)
 }
 
-func Test_checkOutBranch(t *testing.T) {
+func Test_checkOutBranch_New(t *testing.T) {
 	repoDir, err := cloneSourceRepo("https://github.com/git-fixtures/basic.git")
 	defer removeDir(repoDir)
 	repo, err := openLocalRepo(repoDir)
@@ -180,7 +201,23 @@ func Test_checkOutBranch(t *testing.T) {
 		panic(err)
 	}
 
-	assert.NoError(t, checkOutBranch("foo", worktree))
+	assert.NoError(t, checkOutBranch(worktree, "foo"))
+}
+
+func Test_checkOutBranch_Existing(t *testing.T) {
+	repoDir, err := cloneSourceRepo("https://github.com/git-fixtures/basic.git")
+	defer removeDir(repoDir)
+	repo, err := openLocalRepo(repoDir)
+	if err != nil {
+		log.Fatalf("error opening local directory as git repository \n%s", err)
+	}
+
+	worktree, err := repo.Worktree()
+	if err != nil {
+		panic(err)
+	}
+
+	assert.NoError(t, checkOutBranch(worktree, "master"))
 }
 
 func Test_gitAddFiles_Success(t *testing.T) {
@@ -231,8 +268,48 @@ func Test_createCommit_Success(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Len(t, hash.String(), 40)
 
+	// Validate details on the commit
 	commit, err := repo.CommitObject(hash)
 	assert.Equal(t, "test commit", commit.Message)
 	assert.Equal(t, "example-user", commit.Author.Name)
 	assert.Equal(t, "example-user@example.com", commit.Author.Email)
 }
+
+func Test_gitPush_Success(t *testing.T) {
+	// Open local repo and check out a test branch
+	repo, err := openLocalRepo(localRepoDir)
+	assert.NoError(t, err)
+	worktree, err := repo.Worktree()
+	assert.NoError(t, err)
+	err = checkOutBranch(worktree, testBranch)
+	assert.NoError(t, err)
+
+	// Write a new file in the git repository
+	err = ioutil.WriteFile(filepath.Join(localRepoDir, "foo-new-file.txt"), []byte("test"), 0644)
+	assert.NoError(t, err)
+
+	// Git add and commit
+	assert.NoError(t, err)
+	assert.NoError(t, gitAddFiles([]string{"foo-new-file.txt"}, worktree))
+	_, err = createCommit(worktree, "test commit", testUser, testEmail)
+	assert.NoError(t, err)
+
+	err = gitPush(repo, testUser, testGithubToken)
+	assert.NoError(t, err)
+}
+
+//func Test_branchExists(t *testing.T) {
+//	// Clone and open an example git repository
+//	repoDir, err := cloneSourceRepo("https://github.com/git-fixtures/basic.git")
+//	defer removeDir(repoDir)
+//	repo, err := openLocalRepo(repoDir)
+//	assert.NoError(t, err)
+//
+//	exists, err := branchExists(repo, "foo")
+//	assert.False(t, exists)
+//	assert.NoError(t, err)
+//
+//	exists, err = branchExists(repo, "master")
+//	assert.True(t, exists)
+//	assert.NoError(t, err)
+//}
