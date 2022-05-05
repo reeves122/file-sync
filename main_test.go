@@ -61,17 +61,11 @@ func Test_copyFile_Success(t *testing.T) {
 	sourceFile := filepath.Join(sourceDir, "test.txt")
 	err := ioutil.WriteFile(sourceFile, []byte("test"), 0644)
 	assert.NoError(t, err)
-	_, err = os.Stat(sourceFile)
-	assert.NoError(t, err)
-
-	// Create a test destination directory
-	destDir, _ := ioutil.TempDir("", "dest")
-	defer removeDir(destDir)
 
 	// Copy file and check if it exists in destination
-	destFile := filepath.Join(destDir, "test.txt")
-	assert.NoError(t, copyFile(sourceFile, destFile))
-	_, err = os.Stat(destFile)
+	assert.NoError(t, copyFile(sourceFile, "test.txt"))
+	defer os.Remove("test.txt")
+	_, err = os.Stat("test.txt")
 	assert.NoError(t, err)
 }
 

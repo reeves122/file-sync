@@ -140,10 +140,10 @@ func copyFile(source, dest string) error {
 		return err
 	}
 
-	baseDir, _ := filepath.Split(dest)
-	err = os.MkdirAll(baseDir, os.ModePerm)
-	if err != nil {
-		return err
+	if baseDir, _ := filepath.Split(dest); baseDir != "" {
+		if err := os.MkdirAll(baseDir, os.ModePerm); err != nil {
+			return err
+		}
 	}
 
 	err = ioutil.WriteFile(dest, input, 0644)
