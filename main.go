@@ -47,6 +47,17 @@ func main() {
 		log.Fatal("error getting the worktree for the local repository", err)
 	}
 
+	err = repo.Fetch(&git.FetchOptions{
+		//RemoteName:      "",
+		//RefSpecs:        nil,
+		//Depth:           0,
+		Progress: os.Stdout,
+		//Tags:            0,
+	})
+	if err != nil {
+		log.Fatal("error getting the worktree for the local repository", err)
+	}
+
 	if err := checkOutBranch(worktree, branchName); err != nil {
 		log.Fatal(err)
 	}
