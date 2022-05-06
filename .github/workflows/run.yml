@@ -13,5 +13,6 @@ jobs:
 
       - name: Go Run
         run: |
-          go mod download
-          go run main.go
+          git status
+          git checkout integration-test
+          cat foo-new-file.txt
