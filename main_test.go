@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/go-git/go-git/v5"
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"io/ioutil"
@@ -277,36 +276,36 @@ func Test_gitPush_Success(t *testing.T) {
 	worktree, err := repo.Worktree()
 	assert.NoError(t, err)
 
-	log.Info("git fetch")
-	err = repo.Fetch(&git.FetchOptions{
-		//RemoteName:      "origin",
-		//RefSpecs:        nil,
-		Depth:    0,
-		Progress: os.Stdout,
-		//Tags:            0,
-	})
-	assert.NoError(t, err)
+	//log.Info("git fetch")
+	//err = repo.Fetch(&git.FetchOptions{
+	//	//RemoteName:      "origin",
+	//	//RefSpecs:        nil,
+	//	Depth:    0,
+	//	Progress: os.Stdout,
+	//	//Tags:            0,
+	//})
+	//assert.NoError(t, err)
 
-	log.Info("git pull")
-	err = worktree.Pull(&git.PullOptions{
-		SingleBranch:      false,
-		Depth:             0,
-		RecurseSubmodules: 0,
-		Progress:          os.Stdout,
-	})
-	assert.NoError(t, err)
+	//log.Info("git pull")
+	//err = worktree.Pull(&git.PullOptions{
+	//	SingleBranch:      false,
+	//	Depth:             0,
+	//	RecurseSubmodules: 0,
+	//	Progress:          os.Stdout,
+	//})
+	//assert.NoError(t, err)
 
 	err = checkOutBranch(worktree, testBranch)
 	assert.NoError(t, err)
 
-	log.Info("git pull")
-	err = worktree.Pull(&git.PullOptions{
-		SingleBranch:      false,
-		Depth:             0,
-		RecurseSubmodules: 0,
-		Progress:          os.Stdout,
-	})
-	assert.NoError(t, err)
+	//log.Info("git pull")
+	//err = worktree.Pull(&git.PullOptions{
+	//	SingleBranch:      false,
+	//	Depth:             0,
+	//	RecurseSubmodules: 0,
+	//	Progress:          os.Stdout,
+	//})
+	//assert.NoError(t, err)
 
 	// Write a new file in the git repository
 	err = ioutil.WriteFile(filepath.Join(localRepoDir, "foo-new-file.txt"), []byte("test123"), 0644)
