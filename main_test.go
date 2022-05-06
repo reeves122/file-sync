@@ -1,6 +1,8 @@
 package main
 
 import (
+	"github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/config"
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"io/ioutil"
@@ -276,15 +278,17 @@ func Test_gitPush_Success(t *testing.T) {
 	worktree, err := repo.Worktree()
 	assert.NoError(t, err)
 
-	//log.Info("git fetch")
-	//err = repo.Fetch(&git.FetchOptions{
-	//	//RemoteName:      "origin",
-	//	//RefSpecs:        nil,
-	//	Depth:    0,
-	//	Progress: os.Stdout,
-	//	//Tags:            0,
-	//})
-	//assert.NoError(t, err)
+	log.Info("git fetch")
+	err = repo.Fetch(&git.FetchOptions{
+		RemoteName: "origin",
+		RefSpecs:   []config.RefSpec{"refs/heads/integration-test:refs/heads/integration-test"},
+		//Depth:    0,
+		Progress: os.Stdout,
+		//Tags:            0,
+	})
+	assert.NoError(t, err)
+
+	assert.False(t, true)
 
 	//log.Info("git pull")
 	//err = worktree.Pull(&git.PullOptions{
