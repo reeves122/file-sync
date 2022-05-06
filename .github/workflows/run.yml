@@ -14,5 +14,5 @@ jobs:
       - name: Go Run
         run: |
           git status
-          git checkout integration-test
+          git checkout -b integration-test origin/integration-test
           cat foo-new-file.txt
