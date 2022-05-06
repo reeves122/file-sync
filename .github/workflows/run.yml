@@ -21,5 +21,6 @@ jobs:
           git status
           git add foo-new-file.txt
           git commit -m "updated foo-new-file.txt"
+          git push
 
 
