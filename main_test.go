@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/go-git/go-git/v5"
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"io/ioutil"
@@ -275,6 +276,16 @@ func Test_gitPush_Success(t *testing.T) {
 	assert.NoError(t, err)
 	worktree, err := repo.Worktree()
 	assert.NoError(t, err)
+
+	err = repo.Fetch(&git.FetchOptions{
+		//RemoteName:      "origin",
+		//RefSpecs:        nil,
+		//Depth:           0,
+		Progress: os.Stdout,
+		//Tags:            0,
+	})
+	assert.NoError(t, err)
+
 	err = checkOutBranch(worktree, testBranch)
 	assert.NoError(t, err)
 
