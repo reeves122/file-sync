@@ -315,12 +315,21 @@ func Test_gitPush_Success(t *testing.T) {
 	err = ioutil.WriteFile(filepath.Join(localRepoDir, "foo-new-file.txt"), []byte("test123"), 0644)
 	assert.NoError(t, err)
 
-	// Git add and commit
-	assert.NoError(t, err)
-	assert.NoError(t, gitAddFiles([]string{"foo-new-file.txt"}, worktree))
-	_, err = createCommit(worktree, "test commit", testUser, testEmail)
-	assert.NoError(t, err)
+	modified, err := isWorktreeModified(worktree)
+	if err != nil {
+		log.Fatal(err)
+	}
+	if modified {
+		// Git add and commit
+		assert.NoError(t, err)
+		assert.NoError(t, gitAddFiles([]string{"foo-new-file.txt"}, worktree))
+		_, err = createCommit(worktree, "test commit", testUser, testEmail)
+		assert.NoError(t, err)
 
-	err = gitPush(repo, testUser, testGithubToken)
-	assert.NoError(t, err)
+		err = gitPush(repo, testUser, testGithubToken)
+		assert.NoError(t, err)
+	} else {
+		log.Info("no changes")
+	}
+
 }
