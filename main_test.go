@@ -302,14 +302,14 @@ func Test_gitPush_Success(t *testing.T) {
 	err = checkOutBranch(worktree, testBranch)
 	assert.NoError(t, err)
 
-	//log.Info("git pull")
-	//err = worktree.Pull(&git.PullOptions{
-	//	SingleBranch:      false,
-	//	Depth:             0,
-	//	RecurseSubmodules: 0,
-	//	Progress:          os.Stdout,
-	//})
-	//assert.NoError(t, err)
+	log.Info("git pull")
+	err = worktree.Pull(&git.PullOptions{
+		SingleBranch:      false,
+		Depth:             0,
+		RecurseSubmodules: 0,
+		Progress:          os.Stdout,
+	})
+	assert.NoError(t, err)
 
 	// Write a new file in the git repository
 	err = ioutil.WriteFile(filepath.Join(localRepoDir, "foo-new-file.txt"), []byte("test123"), 0644)
