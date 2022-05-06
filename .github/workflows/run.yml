@@ -17,3 +17,9 @@ jobs:
           git fetch
           git checkout integration-test
           cat foo-new-file.txt
+          echo `date` >> foo-new-file.txt
+          git status
+          git add foo-new-file.txt
+          git commit -m "updated foo-new-file.txt"
+
+
