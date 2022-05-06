@@ -280,8 +280,8 @@ func Test_gitPush_Success(t *testing.T) {
 
 	log.Info("git fetch")
 	err = repo.Fetch(&git.FetchOptions{
-		RemoteName: "origin",
-		RefSpecs:   []config.RefSpec{"refs/heads/integration-test:refs/heads/integration-test"},
+		//RemoteName: "origin",
+		RefSpecs: []config.RefSpec{"refs/heads/integration-test:refs/heads/integration-test"},
 		//Depth:    0,
 		Progress: os.Stdout,
 		//Tags:            0,
