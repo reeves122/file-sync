@@ -16,15 +16,15 @@ func Test_RemoveDir(t *testing.T) {
 
 func Test_RunCommand_Success(t *testing.T) {
 	dir, _ := ioutil.TempDir("", "test")
-	output, err := RunCommand(dir, "cd")
-	assert.Contains(t, output, "")
+	output, err := RunCommand(dir, "echo", "foo")
+	assert.Contains(t, output, "foo")
 	assert.NoError(t, err)
 }
 
 func Test_RunCommand_Error(t *testing.T) {
 	dir, _ := ioutil.TempDir("", "test")
-	output, err := RunCommand(dir, "cd", "foo")
-	assert.Contains(t, output, "No such file or directory")
+	output, err := RunCommand(dir, "foo", "foo")
+	assert.Contains(t, output, "")
 	assert.Error(t, err)
 }
 
