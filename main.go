@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/champ-oss/file-sync/pkg/common"
 	"github.com/champ-oss/file-sync/pkg/git/cli"
 	log "github.com/sirupsen/logrus"
@@ -46,7 +47,12 @@ func main() {
 		panic(err)
 	}
 
-	_, err = common.RunCommand(localRepoDir, "git", "pull", "origin", branchName, "--rebase")
+	//_, err = common.RunCommand(localRepoDir, "git", "pull", "origin", branchName, "--rebase")
+	//if err != nil {
+	//	panic(err)
+	//}
+
+	_, err = common.RunCommand(localRepoDir, "git", "reset", "--hard", fmt.Sprintf("origin/%s", branchName))
 	if err != nil {
 		panic(err)
 	}
