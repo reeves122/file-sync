@@ -2,16 +2,16 @@ on:
   workflow_dispatch:
   push:
 
-env:
-  FILE_SYNC_PAT: ${{ secrets.FILE_SYNC_PAT }}
+#env:
+#  FILE_SYNC_PAT: ${{ secrets.FILE_SYNC_PAT }}
 
 jobs:
   run:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-#        with:
-#          token: ${{ secrets.FILE_SYNC_PAT }}
+        with:
+          token: ${{ secrets.FILE_SYNC_PAT }}
 
       - name: Go Run
         run: |

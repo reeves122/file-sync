@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"github.com/champ-oss/file-sync/pkg/common"
 	"github.com/champ-oss/file-sync/pkg/git/cli"
 	log "github.com/sirupsen/logrus"
@@ -33,16 +32,16 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-
-	_, err = common.RunCommand(localRepoDir, "git", "remote", "remove", "origin")
-	if err != nil {
-		panic(err)
-	}
-
-	err = common.RunCommandNoLog(localRepoDir, "git", "remote", "add", "origin", fmt.Sprintf("https://%s@github.com/reeves122/file-sync.git", os.Getenv("FILE_SYNC_PAT")))
-	if err != nil {
-		panic(err)
-	}
+	//
+	//_, err = common.RunCommand(localRepoDir, "git", "remote", "remove", "origin")
+	//if err != nil {
+	//	panic(err)
+	//}
+	//
+	//err = common.RunCommandNoLog(localRepoDir, "git", "remote", "add", "origin", fmt.Sprintf("https://%s@github.com/reeves122/file-sync.git", os.Getenv("FILE_SYNC_PAT")))
+	//if err != nil {
+	//	panic(err)
+	//}
 
 	err = cli.Fetch(localRepoDir)
 	if err != nil {
@@ -90,13 +89,13 @@ func main() {
 		log.Fatal(err)
 	}
 
-	_, err = common.RunCommand(localRepoDir, "git", "push", fmt.Sprintf("https://%s@github.com/reeves122/file-sync.git", os.Getenv("FILE_SYNC_PAT")))
-	if err != nil {
-		log.Fatal(err)
-	}
-	//err = cli.Push(localRepoDir, branchName)
+	//_, err = common.RunCommand(localRepoDir, "git", "push", fmt.Sprintf("https://%s@github.com/reeves122/file-sync.git", os.Getenv("FILE_SYNC_PAT")))
 	//if err != nil {
 	//	log.Fatal(err)
 	//}
+	err = cli.Push(localRepoDir, branchName)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 }
