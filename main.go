@@ -46,6 +46,11 @@ func main() {
 		panic(err)
 	}
 
+	_, err = common.RunCommand(localRepoDir, "git", "pull")
+	if err != nil {
+		panic(err)
+	}
+
 	if err := common.CopySourceFiles(files, sourceDir, localRepoDir); err != nil {
 		log.Fatal(err)
 	}
