@@ -80,6 +80,11 @@ func main() {
 		log.Fatal(err)
 	}
 
+	_, err = common.RunCommand(localRepoDir, "git", "remote", "-v")
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	err = cli.Push(localRepoDir, branchName)
 	if err != nil {
 		log.Fatal(err)
