@@ -5,6 +5,7 @@ import (
 	"github.com/champ-oss/file-sync/pkg/common"
 	log "github.com/sirupsen/logrus"
 	"io/ioutil"
+	"strings"
 )
 
 func Clone(sourceRepo string) (dir string, err error) {
@@ -91,6 +92,14 @@ func SetAuthor(repoDir, name, email string) error {
 	}
 	output, err = common.RunCommand(repoDir, "git", "config", "user.email", email)
 	if err != nil {
+		return fmt.Errorf(output)
+	}
+	return nil
+}
+
+func Reset(repoDir, branchName string) error {
+	output, err := common.RunCommand(repoDir, "git", "reset", "--hard", fmt.Sprintf("origin/%s", branchName))
+	if err != nil && !strings.Contains(output, "unknown revision or path not in the working tree") {
 		return fmt.Errorf(output)
 	}
 	return nil

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"github.com/champ-oss/file-sync/pkg/common"
 	"github.com/champ-oss/file-sync/pkg/git/cli"
 	log "github.com/sirupsen/logrus"
@@ -18,6 +17,7 @@ var files = []string{
 	".tflint.hcl",
 	"test/src/go.mod",
 	"examples/complete/main.tf",
+	".github/CODEOWNERS",
 }
 
 func main() {
@@ -47,12 +47,7 @@ func main() {
 		panic(err)
 	}
 
-	//_, err = common.RunCommand(localRepoDir, "git", "pull", "origin", branchName, "--rebase")
-	//if err != nil {
-	//	panic(err)
-	//}
-
-	_, err = common.RunCommand(localRepoDir, "git", "reset", "--hard", fmt.Sprintf("origin/%s", branchName))
+	err = cli.Reset(localRepoDir, branchName)
 	if err != nil {
 		panic(err)
 	}
