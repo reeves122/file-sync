@@ -10,6 +10,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: reeves122/file-sync@e36822562b698aefab69758256f26eca7fddd874
+      - uses: reeves122/file-sync@76a719dcd1c3f92037778080880f333feb232415
         with:
           token: ${{ secrets.FILE_SYNC_PAT }}
