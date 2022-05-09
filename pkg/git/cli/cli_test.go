@@ -289,3 +289,28 @@ func Test_SetAuthor_Error(t *testing.T) {
 	err = SetAuthor(repoDir, "testuser", "testuser@example.com")
 	assert.Contains(t, err.Error(), "not in a git directory")
 }
+
+func Test_AnyModified_Clean(t *testing.T) {
+	repoDir, err := Clone(fixtureGitRepo)
+	defer common.RemoveDir(repoDir)
+	if err != nil {
+		panic(err)
+	}
+
+	assert.False(t, AnyModified(repoDir, []string{"LICENSE"}))
+}
+
+func Test_AnyModified_Modified(t *testing.T) {
+	repoDir, err := Clone(fixtureGitRepo)
+	defer common.RemoveDir(repoDir)
+	if err != nil {
+		panic(err)
+	}
+
+	err = ioutil.WriteFile(filepath.Join(repoDir, "CHANGELOG"), []byte("test"), 0644)
+	if err != nil {
+		panic(err)
+	}
+
+	assert.True(t, AnyModified(repoDir, []string{"LICENSE", "CHANGELOG"}))
+}

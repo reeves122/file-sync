@@ -51,6 +51,15 @@ func Status(repoDir, fileName string) string {
 	return output
 }
 
+func AnyModified(repoDir string, files []string) bool {
+	for _, f := range files {
+		if status := Status(repoDir, f); status != "" {
+			return true
+		}
+	}
+	return false
+}
+
 func Add(repoDir, fileName string) error {
 	output, err := common.RunCommand(repoDir, "git", "add", fileName)
 	if err != nil {
