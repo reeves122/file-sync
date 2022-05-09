@@ -55,38 +55,20 @@ func main() {
 		os.Exit(0)
 	}
 
-	//if err := checkOutBranch(worktree, branchName); err != nil {
-	//	log.Fatal(err)
-	//}
-	//
-	//if err := copySourceFiles(files, sourceDir, localRepoDir); err != nil {
-	//	log.Fatal(err)
-	//}
-	//
-	//modified, err := isWorktreeModified(worktree)
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
-	//if !modified {
-	//	log.Info("all files are up to date")
-	//	os.Exit(0)
-	//}
-	//
-	//if err := gitAddFiles(files, worktree); err != nil {
-	//	log.Fatal(err)
-	//}
-	//
-	//hash, err := createCommit(worktree, commitMsg, user, email)
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
-	//
-	//commit, err := repo.CommitObject(hash)
-	//fmt.Println(commit.Files())
-	//fmt.Println(commit.String())
-	//
-	//if err := gitPush(repo, user, os.Getenv("GITHUB_TOKEN")); err != nil {
-	//	log.Fatal(err)
-	//}
+	for _, f := range files {
+		err = cli.Add(localRepoDir, f)
+		if err != nil {
+			panic(err)
+		}
+	}
 
+	err = cli.Commit(localRepoDir, commitMsg)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = cli.Push(localRepoDir, branchName)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
