@@ -18,6 +18,7 @@ var files = []string{
 	"test/src/go.mod",
 	"examples/complete/main.tf",
 	".github/CODEOWNERS",
+	".github/workflows/release.yml",
 }
 
 func main() {
