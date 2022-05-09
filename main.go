@@ -27,7 +27,7 @@ func main() {
 	//owner := common.GetOwner()
 	//repo := common.GetRepo()
 	repo := os.Getenv("GITHUB_REPOSITORY")
-	token := os.Getenv("ACCESS_TOKEN")
+	token := os.Getenv("INPUT_TOKEN")
 
 	sourceDir, err := cli.Clone("champ-oss/terraform-module-template", token)
 	if err != nil {
