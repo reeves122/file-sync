@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/champ-oss/file-sync/pkg/common"
 	"github.com/champ-oss/file-sync/pkg/git/cli"
 	log "github.com/sirupsen/logrus"
@@ -29,6 +30,11 @@ func main() {
 	}
 
 	err = cli.SetAuthor(localRepoDir, user, email)
+	if err != nil {
+		panic(err)
+	}
+
+	_, err = common.RunCommand(localRepoDir, "git", "remote", "set-url", "origin", fmt.Sprintf("https://%s:%s@github.com/reeves122/file-sync.git", user, os.Getenv("GITHUB_TOKEN")))
 	if err != nil {
 		panic(err)
 	}
