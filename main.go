@@ -46,7 +46,7 @@ func main() {
 		panic(err)
 	}
 
-	_, err = common.RunCommand(localRepoDir, "git", "pull", "origin", branchName)
+	_, err = common.RunCommand(localRepoDir, "git", "pull", "origin", branchName, "--rebase")
 	if err != nil {
 		panic(err)
 	}
