@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"github.com/champ-oss/file-sync/pkg/common"
 	"github.com/champ-oss/file-sync/pkg/git/cli"
 	"github.com/champ-oss/file-sync/pkg/github"
@@ -25,16 +24,17 @@ var files = []string{
 func main() {
 	log.SetLevel(log.DebugLevel)
 
-	owner := common.GetOwner()
-	repo := common.GetRepo()
-	log.Infof("owner:%s repo:%s", owner, repo)
+	//owner := common.GetOwner()
+	//repo := common.GetRepo()
+	repo := os.Getenv("GITHUB_REPOSITORY")
+	token := os.Getenv("ACCESS_TOKEN")
 
-	sourceDir, err := cli.Clone(fmt.Sprintf("https://%s@github.com/champ-oss/terraform-module-template", os.Getenv("GITHUB_TOKEN")))
+	sourceDir, err := cli.Clone("champ-oss/terraform-module-template", token)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	destDir, err := cli.Clone(fmt.Sprintf("https://%s@github.com/reeves122/file-sync", os.Getenv("GITHUB_TOKEN")))
+	destDir, err := cli.Clone(repo, token)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -95,7 +95,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	client := github.GetClient(os.Getenv("GITHUB_TOKEN"))
+	client := github.GetClient(token)
 	err = github.CreatePullRequest(client)
 	if err != nil {
 		log.Fatal(err)
