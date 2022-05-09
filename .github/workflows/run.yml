@@ -14,13 +14,3 @@ jobs:
       - name: Go Run
         run: |
           git status
-          git fetch
-          git checkout integration-test
-          cat foo-new-file.txt
-          echo -n test123 > foo-new-file.txt
-          git status
-          git add foo-new-file.txt
-          git commit -m "updated foo-new-file.txt"
-          git push
-
-
