@@ -24,6 +24,11 @@ var files = []string{
 
 func main() {
 	log.SetLevel(log.DebugLevel)
+
+	owner := os.Getenv("GITHUB_REPOSITORY_OWNER")
+	repo := os.Getenv("GITHUB_REPOSITORY")
+	log.Infof("owner:%s repo:%s", owner, repo)
+
 	sourceDir, err := cli.Clone(fmt.Sprintf("https://%s@github.com/champ-oss/terraform-module-template", os.Getenv("GITHUB_TOKEN")))
 	if err != nil {
 		log.Fatal(err)
