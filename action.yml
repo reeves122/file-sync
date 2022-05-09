@@ -1,4 +1,8 @@
 name: 'file-sync'
+inputs:
+  token:
+    description: 'access token'
+    required: false
 runs:
   using: 'docker'
   image: 'Dockerfile'

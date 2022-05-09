@@ -11,3 +11,5 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: reeves122/file-sync@e36822562b698aefab69758256f26eca7fddd874
+        with:
+          token: ${{ secrets.FILE_SYNC_PAT }}
