@@ -199,6 +199,11 @@ func Test_Commit_Clean(t *testing.T) {
 		panic(err)
 	}
 
+	err = SetAuthor(repoDir, "testuser", "testuser@example.com")
+	if err != nil {
+		panic(err)
+	}
+
 	err = Commit(repoDir, "test commit")
 	assert.Equal(t, "", err.Error())
 }
