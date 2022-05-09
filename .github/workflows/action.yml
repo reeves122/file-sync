@@ -10,4 +10,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: reeves122/file-sync@50718d52413763c73b2a25fda1300ccb55491263
+      - uses: reeves122/file-sync@e36822562b698aefab69758256f26eca7fddd874
