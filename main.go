@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/champ-oss/file-sync/pkg/common"
 	"github.com/champ-oss/file-sync/pkg/git/cli"
 	log "github.com/sirupsen/logrus"
@@ -23,77 +24,68 @@ var files = []string{
 
 func main() {
 	log.SetLevel(log.DebugLevel)
-	sourceDir, err := cli.Clone("https://github.com/champ-oss/terraform-module-template")
+	sourceDir, err := cli.Clone(fmt.Sprintf("https://%s@github.com/champ-oss/terraform-module-template", os.Getenv("GITHUB_TOKEN")))
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	err = cli.SetAuthor(localRepoDir, user, email)
+	destDir, err := cli.Clone(fmt.Sprintf("https://%s@github.com/reeves122/file-sync", os.Getenv("GITHUB_TOKEN")))
 	if err != nil {
-		panic(err)
-	}
-	//
-	//_, err = common.RunCommand(localRepoDir, "git", "remote", "remove", "origin")
-	//if err != nil {
-	//	panic(err)
-	//}
-	//
-	//err = common.RunCommandNoLog(localRepoDir, "git", "remote", "add", "origin", fmt.Sprintf("https://%s@github.com/reeves122/file-sync.git", os.Getenv("FILE_SYNC_PAT")))
-	//if err != nil {
-	//	panic(err)
-	//}
-
-	err = cli.Fetch(localRepoDir)
-	if err != nil {
-		panic(err)
-	}
-
-	err = cli.Branch(localRepoDir, branchName)
-	if err != nil {
-		panic(err)
-	}
-
-	err = cli.Checkout(localRepoDir, branchName)
-	if err != nil {
-		panic(err)
-	}
-
-	err = cli.Reset(localRepoDir, branchName)
-	if err != nil {
-		panic(err)
-	}
-
-	if err := common.CopySourceFiles(files, sourceDir, localRepoDir); err != nil {
 		log.Fatal(err)
 	}
 
-	if modified := cli.AnyModified(localRepoDir, files); modified == false {
+	err = cli.SetAuthor(destDir, user, email)
+	if err != nil {
+		panic(err)
+	}
+
+	err = cli.Fetch(destDir)
+	if err != nil {
+		panic(err)
+	}
+
+	err = cli.Branch(destDir, branchName)
+	if err != nil {
+		panic(err)
+	}
+
+	err = cli.Checkout(destDir, branchName)
+	if err != nil {
+		panic(err)
+	}
+
+	err = cli.Reset(destDir, branchName)
+	if err != nil {
+		panic(err)
+	}
+
+	if err := common.CopySourceFiles(files, sourceDir, destDir); err != nil {
+		log.Fatal(err)
+	}
+
+	if modified := cli.AnyModified(destDir, files); modified == false {
 		log.Info("all files are up to date")
 		os.Exit(0)
 	}
 
 	for _, f := range files {
-		err = cli.Add(localRepoDir, f)
+		err = cli.Add(destDir, f)
 		if err != nil {
 			panic(err)
 		}
 	}
 
-	err = cli.Commit(localRepoDir, commitMsg)
+	err = cli.Commit(destDir, commitMsg)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	_, err = common.RunCommand(localRepoDir, "git", "remote", "-v")
+	_, err = common.RunCommand(destDir, "git", "remote", "-v")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	//_, err = common.RunCommand(localRepoDir, "git", "push", fmt.Sprintf("https://%s@github.com/reeves122/file-sync.git", os.Getenv("FILE_SYNC_PAT")))
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
-	err = cli.Push(localRepoDir, branchName)
+	err = cli.Push(destDir, branchName)
 	if err != nil {
 		log.Fatal(err)
 	}

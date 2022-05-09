@@ -2,8 +2,8 @@ on:
   workflow_dispatch:
   push:
 
-#env:
-#  FILE_SYNC_PAT: ${{ secrets.FILE_SYNC_PAT }}
+env:
+  GITHUB_TOKEN: ${{ secrets.FILE_SYNC_PAT }}
 
 jobs:
   run:

@@ -1,4 +1,3 @@
-
 run:
 	go run .
 
@@ -15,3 +14,6 @@ fmt:
 
 tidy:
 	go mod tidy
+
+build:
+	docker build -t file-sync .
