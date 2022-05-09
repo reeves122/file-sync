@@ -90,9 +90,13 @@ func main() {
 		log.Fatal(err)
 	}
 
-	err = cli.Push(localRepoDir, branchName)
+	_, err = common.RunCommand(localRepoDir, "git", "push", fmt.Sprintf("https://%s@github.com/reeves122/file-sync.git", os.Getenv("FILE_SYNC_PAT")))
 	if err != nil {
 		log.Fatal(err)
 	}
+	//err = cli.Push(localRepoDir, branchName)
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
 
 }
