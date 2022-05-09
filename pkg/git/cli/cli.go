@@ -74,3 +74,15 @@ func Push(repoDir, branchName string) error {
 	}
 	return nil
 }
+
+func SetAuthor(repoDir, name, email string) error {
+	output, err := common.RunCommand(repoDir, "git", "config", "user.name", name)
+	if err != nil {
+		return fmt.Errorf(output)
+	}
+	output, err = common.RunCommand(repoDir, "git", "config", "user.email", email)
+	if err != nil {
+		return fmt.Errorf(output)
+	}
+	return nil
+}

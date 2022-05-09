@@ -173,6 +173,11 @@ func Test_Commit_Success(t *testing.T) {
 		panic(err)
 	}
 
+	err = SetAuthor(repoDir, "testuser", "testuser@example.com")
+	if err != nil {
+		panic(err)
+	}
+
 	err = ioutil.WriteFile(filepath.Join(repoDir, "LICENSE"), []byte("test"), 0644)
 	if err != nil {
 		panic(err)
@@ -219,6 +224,11 @@ func Test_Push_Success(t *testing.T) {
 		panic(err)
 	}
 
+	err = SetAuthor(repoDir, "testuser", "testuser@example.com")
+	if err != nil {
+		panic(err)
+	}
+
 	err = Branch(repoDir, "test")
 	if err != nil {
 		panic(err)
@@ -257,4 +267,20 @@ func Test_Push_Error(t *testing.T) {
 
 	err = Push(repoDir, "test")
 	assert.Contains(t, err.Error(), "src refspec test does not match any")
+}
+
+func Test_SetAuthor_Success(t *testing.T) {
+	repoDir, err := Clone(fixtureGitRepo)
+	defer common.RemoveDir(repoDir)
+
+	err = SetAuthor(repoDir, "testuser", "testuser@example.com")
+	assert.Nil(t, err)
+}
+
+func Test_SetAuthor_Error(t *testing.T) {
+	repoDir, err := Clone(fixtureGitRepoInvalid)
+	defer common.RemoveDir(repoDir)
+
+	err = SetAuthor(repoDir, "testuser", "testuser@example.com")
+	assert.Contains(t, err.Error(), "not in a git directory")
 }
