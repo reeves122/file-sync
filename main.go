@@ -9,7 +9,6 @@ import (
 	"os"
 )
 
-const localRepoDir = "./"
 const branchName = "file-sync"
 const commitMsg = "file-sync"
 const user = "file-sync"

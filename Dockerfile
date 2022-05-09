@@ -13,3 +13,5 @@ RUN apk add git --no-cache
 
 WORKDIR /
 COPY --from=builder /usr/src/app/app .
+
+CMD ["/app"]
