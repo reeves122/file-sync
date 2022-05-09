@@ -65,6 +65,18 @@ func RunCommand(dir, cmd string, args ...string) (output string, err error) {
 	return stdout.String(), nil
 }
 
+func RunCommandNoLog(dir, cmd string, args ...string) error {
+	command := exec.Command(cmd, args...)
+	command.Dir = dir
+
+	err := command.Run()
+
+	if err != nil {
+		return fmt.Errorf("error running command")
+	}
+	return nil
+}
+
 func LogCommand(cmd string, args ...string) {
 	logMessage := cmd
 	for _, a := range args {

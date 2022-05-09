@@ -34,7 +34,7 @@ func main() {
 		panic(err)
 	}
 
-	_, err = common.RunCommand(localRepoDir, "git", "remote", "set-url", "origin", fmt.Sprintf("https://%s:%s@github.com/reeves122/file-sync.git", user, os.Getenv("GITHUB_TOKEN")))
+	err = common.RunCommandNoLog(localRepoDir, "git", "remote", "set-url", "origin", fmt.Sprintf("https://%s:%s@github.com/reeves122/file-sync.git", user, os.Getenv("GITHUB_TOKEN")))
 	if err != nil {
 		panic(err)
 	}
