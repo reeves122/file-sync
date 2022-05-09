@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/champ-oss/file-sync/pkg/common"
 	"github.com/champ-oss/file-sync/pkg/git/cli"
+	"github.com/champ-oss/file-sync/pkg/github"
 	log "github.com/sirupsen/logrus"
 	"os"
 )
@@ -90,4 +91,9 @@ func main() {
 		log.Fatal(err)
 	}
 
+	client := github.GetClient(os.Getenv("GITHUB_TOKEN"))
+	err = github.CreatePullRequest(client)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
