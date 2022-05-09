@@ -314,3 +314,33 @@ func Test_AnyModified_Modified(t *testing.T) {
 
 	assert.True(t, AnyModified(repoDir, []string{"LICENSE", "CHANGELOG"}))
 }
+
+func Test_Reset_Success(t *testing.T) {
+	repoDir, err := Clone(fixtureGitRepo)
+	defer common.RemoveDir(repoDir)
+	if err != nil {
+		panic(err)
+	}
+
+	err = Reset(repoDir, "master")
+	assert.NoError(t, err)
+}
+
+func Test_Reset_Invalid(t *testing.T) {
+	repoDir, err := Clone(fixtureGitRepo)
+	defer common.RemoveDir(repoDir)
+	if err != nil {
+		panic(err)
+	}
+
+	err = Reset(repoDir, "foo")
+	assert.NoError(t, err)
+}
+
+func Test_Reset_Error(t *testing.T) {
+	repoDir, _ := Clone(fixtureGitRepoInvalid)
+	defer common.RemoveDir(repoDir)
+
+	err := Reset(repoDir, "foo")
+	assert.Contains(t, err.Error(), "not a git repository")
+}
