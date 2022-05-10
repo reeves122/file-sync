@@ -31,8 +31,10 @@ func main() {
 	token := os.Getenv("INPUT_TOKEN")
 	fileList := os.Getenv("INPUT_FILES")
 	workingDir := os.Getenv("GITHUB_WORKSPACE")
-	log.Info("GITHUB_WORKSPACE", workingDir)
-	log.Info("files", fileList)
+	sourceRepo := os.Getenv("INPUT_REPO")
+	log.Info("GITHUB_WORKSPACE: ", workingDir)
+	log.Info("files: ", fileList)
+	log.Info("repo: ", sourceRepo)
 
 	_, err := common.RunCommand(workingDir, "pwd")
 	if err != nil {

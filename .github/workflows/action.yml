@@ -13,6 +13,7 @@ jobs:
       - uses: reeves122/file-sync@30ae55029b95b6048cb8ba34c193cc9490527f63
         with:
           token: ${{ secrets.FILE_SYNC_PAT }}
+          repo: champ-oss/terraform-module-template
           files: |
             file1=foo1
             file2=foo2

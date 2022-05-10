@@ -3,6 +3,9 @@ inputs:
   token:
     description: 'access token'
     required: false
+  repo:
+    description: 'source repo'
+    required: false
   files:
     description: 'list of files'
     required: false
@@ -11,3 +14,7 @@ runs:
   steps:
     - run: go run main.go
       shell: bash
+      env:
+        INPUT_TOKEN: ${{ inputs.token }}
+        INPUT_FILES: ${{ inputs.files }}
+        INPUT_REPO: ${{ inputs.repo }}
