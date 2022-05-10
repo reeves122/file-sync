@@ -129,8 +129,3 @@ func Test_LogOutput_Empty(t *testing.T) {
 		LogOutput(test)
 	})
 }
-
-func Test_GetFiles(t *testing.T) {
-	_ = os.Setenv("INPUT_FILES", "file1\nfile2\nfile3")
-	assert.Equal(t, []string{"file1", "file2", "file3"}, GetFiles())
-}

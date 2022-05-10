@@ -8,7 +8,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"strings"
 )
 
 func RemoveDir(dir string) {
@@ -91,32 +90,4 @@ func LogOutput(output bytes.Buffer) {
 		return
 	}
 	fmt.Print(output.String())
-}
-
-func GetOwner() string {
-	owner := os.Getenv("GITHUB_REPOSITORY_OWNER")
-	if owner == "" {
-		log.Fatal("GITHUB_REPOSITORY_OWNER env is empty")
-	}
-	return owner
-}
-
-func GetRepo() string {
-	ownerRepo := os.Getenv("GITHUB_REPOSITORY")
-	if ownerRepo == "" {
-		log.Fatal("GITHUB_REPOSITORY env is empty")
-	}
-	parts := strings.Split(ownerRepo, "/")
-	if len(parts) != 2 {
-		log.Fatalf("GITHUB_REPOSITORY is in unexpected format: %s", ownerRepo)
-	}
-	return parts[1]
-}
-
-func GetFiles() []string {
-	files := os.Getenv("INPUT_FILES")
-	if files == "" {
-		log.Fatal("INPUT_FILES env is empty")
-	}
-	return strings.Split(files, "\n")
 }

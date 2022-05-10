@@ -2,89 +2,84 @@ package main
 
 import (
 	"github.com/champ-oss/file-sync/pkg/common"
+	"github.com/champ-oss/file-sync/pkg/config"
 	"github.com/champ-oss/file-sync/pkg/git/cli"
 	"github.com/champ-oss/file-sync/pkg/github"
 	log "github.com/sirupsen/logrus"
-	"os"
 )
-
-const branchName = "file-sync"
-const commitMsg = "file-sync"
-const user = "file-sync"
-const email = "file-sync@example.com"
 
 func main() {
 	log.SetLevel(log.DebugLevel)
 
-	owner := common.GetOwner()
-	repo := common.GetRepo()
-	//repo := os.Getenv("GITHUB_REPOSITORY")
-	token := os.Getenv("INPUT_TOKEN")
-	//fileList := os.Getenv("INPUT_FILES")
-	files := common.GetFiles()
-	workingDir := os.Getenv("GITHUB_WORKSPACE")
-	sourceRepo := os.Getenv("INPUT_REPO")
-	log.Info("GITHUB_WORKSPACE: ", workingDir)
-	log.Info("files: ", files)
-	log.Info("repo: ", sourceRepo)
+	workspace := config.GetWorkspace()
+	token := config.GetToken()
+	repoName := config.GetRepoName()
+	ownerName := config.GetOwnerName()
+	sourceRepo := config.GetSourceRepo()
+	files := config.GetFiles()
+	targetBranch := config.GetTargetBranch()
+	pullRequestBranch := config.GetPullRequestBranch()
+	user := config.GetUser()
+	email := config.GetEmail()
+	commitMsg := config.GetCommitMessage()
 
 	sourceDir, err := cli.Clone(sourceRepo, token)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	err = cli.SetAuthor(workingDir, user, email)
+	err = cli.SetAuthor(workspace, user, email)
 	if err != nil {
 		panic(err)
 	}
 
-	err = cli.Fetch(workingDir)
+	err = cli.Fetch(workspace)
 	if err != nil {
 		panic(err)
 	}
 
-	err = cli.Branch(workingDir, branchName)
+	err = cli.Branch(workspace, pullRequestBranch)
 	if err != nil {
 		panic(err)
 	}
 
-	err = cli.Checkout(workingDir, branchName)
+	err = cli.Checkout(workspace, pullRequestBranch)
 	if err != nil {
 		panic(err)
 	}
 
-	err = cli.Reset(workingDir, branchName)
+	err = cli.Reset(workspace, pullRequestBranch)
 	if err != nil {
 		panic(err)
 	}
 
-	if err := common.CopySourceFiles(files, sourceDir, workingDir); err != nil {
+	if err := common.CopySourceFiles(files, sourceDir, workspace); err != nil {
 		log.Fatal(err)
 	}
 
-	if modified := cli.AnyModified(workingDir, files); modified == false {
+	if modified := cli.AnyModified(workspace, files); modified == false {
 		log.Info("all files are up to date")
 	} else {
 		for _, f := range files {
-			err = cli.Add(workingDir, f)
+			err = cli.Add(workspace, f)
 			if err != nil {
 				panic(err)
 			}
 		}
 
-		err = cli.Commit(workingDir, commitMsg)
+		err = cli.Commit(workspace, commitMsg)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		err = cli.Push(workingDir, branchName)
+		err = cli.Push(workspace, pullRequestBranch)
 		if err != nil {
 			log.Fatal(err)
 		}
 	}
 
 	client := github.GetClient(token)
-	err = github.CreatePullRequest(client, owner, repo, "file-sync", branchName, "main")
+	err = github.CreatePullRequest(client, ownerName, repoName, "file-sync", pullRequestBranch, targetBranch)
 	if err != nil {
 		log.Fatal(err)
 	}
