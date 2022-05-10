@@ -112,3 +112,11 @@ func GetRepo() string {
 	}
 	return parts[1]
 }
+
+func GetFiles() []string {
+	files := os.Getenv("INPUT_FILES")
+	if files == "" {
+		log.Fatal("INPUT_FILES env is empty")
+	}
+	return strings.Split(files, "\n")
+}

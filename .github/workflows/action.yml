@@ -10,11 +10,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.FILE_SYNC_PAT }}
+
       - uses: reeves122/file-sync@aed3fa2f9813988c5aa7f025ba89d07c84a2bd72
         with:
           token: ${{ secrets.FILE_SYNC_PAT }}
           repo: champ-oss/terraform-module-template
           files: |
-            file1=foo1
-            file2=foo2
-            file3=foo3
+            .tflint.hcl
+            test/src/go.mod
+            examples/complete/main.tf
+            .github/CODEOWNERS
+            .github/workflows/release.yml

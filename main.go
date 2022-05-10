@@ -8,19 +8,10 @@ import (
 	"os"
 )
 
-const localRepoDir = "./"
 const branchName = "file-sync"
 const commitMsg = "file-sync"
 const user = "file-sync"
 const email = "file-sync@example.com"
-
-var files = []string{
-	".tflint.hcl",
-	"test/src/go.mod",
-	"examples/complete/main.tf",
-	".github/CODEOWNERS",
-	".github/workflows/release.yml",
-}
 
 func main() {
 	log.SetLevel(log.DebugLevel)
@@ -29,11 +20,12 @@ func main() {
 	repo := common.GetRepo()
 	//repo := os.Getenv("GITHUB_REPOSITORY")
 	token := os.Getenv("INPUT_TOKEN")
-	fileList := os.Getenv("INPUT_FILES")
+	//fileList := os.Getenv("INPUT_FILES")
+	files := common.GetFiles()
 	workingDir := os.Getenv("GITHUB_WORKSPACE")
 	sourceRepo := os.Getenv("INPUT_REPO")
 	log.Info("GITHUB_WORKSPACE: ", workingDir)
-	log.Info("files: ", fileList)
+	log.Info("files: ", files)
 	log.Info("repo: ", sourceRepo)
 
 	_, err := common.RunCommand(workingDir, "pwd")
@@ -46,7 +38,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	sourceDir, err := cli.Clone("champ-oss/terraform-module-template", token)
+	sourceDir, err := cli.Clone(sourceRepo, token)
 	if err != nil {
 		log.Fatal(err)
 	}
