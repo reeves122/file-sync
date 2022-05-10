@@ -28,25 +28,10 @@ func main() {
 	log.Info("files: ", files)
 	log.Info("repo: ", sourceRepo)
 
-	_, err := common.RunCommand(workingDir, "pwd")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	_, err = common.RunCommand(workingDir, "ls", "-la")
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	sourceDir, err := cli.Clone(sourceRepo, token)
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	//destDir, err := cli.Clone(repo, token)
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
 
 	err = cli.SetAuthor(workingDir, user, email)
 	if err != nil {

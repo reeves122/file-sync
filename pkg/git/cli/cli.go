@@ -33,6 +33,9 @@ func Fetch(repoDir string) error {
 func Branch(repoDir, branchName string) error {
 	output, err := common.RunCommand(repoDir, "git", "branch", branchName)
 	if err != nil {
+		if strings.Contains(output, "already exists") {
+			return nil
+		}
 		return fmt.Errorf(output)
 	}
 	return nil
