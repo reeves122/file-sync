@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/google/go-github/v44/github"
 	"golang.org/x/oauth2"
+	"strings"
 )
 
 func GetClient(token string) *github.Client {
@@ -21,6 +22,9 @@ func CreatePullRequest(client *github.Client, owner, repo, title, head, base str
 		Base:  github.String(base),
 	})
 	if err != nil {
+		if strings.Contains(err.Error(), "A pull request already exists") {
+			return nil
+		}
 		return err
 	}
 	return nil
