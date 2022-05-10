@@ -5,17 +5,24 @@ import (
 	"github.com/champ-oss/file-sync/pkg/common"
 	log "github.com/sirupsen/logrus"
 	"io/ioutil"
-	"os"
 	"strings"
 )
 
-func Clone(repo string, token string) (dir string, err error) {
+func CloneFromGitHub(repo string, token string) (dir string, err error) {
+	log.Infof("Cloning repository %s to %s", repo, dir)
+	repoWithToken := fmt.Sprintf("https://%s@github.com/%s", token, repo)
+	dir, err = Clone(repoWithToken)
+	if err != nil {
+		return dir, err
+	}
+	return dir, nil
+}
+
+func Clone(repo string) (dir string, err error) {
 	log.Debug("Creating temp directory for repository")
 	dir, _ = ioutil.TempDir("", "repo")
 
-	log.Infof("Cloning repository %s to %s", repo, dir)
-	repoWithToken := fmt.Sprintf("https://%s@github.com/%s", os.Getenv("GITHUB_TOKEN"), repo)
-	err = common.RunCommandNoLog("./", "git", "clone", repoWithToken, dir)
+	err = common.RunCommandNoLog("./", "git", "clone", repo, dir)
 	if err != nil {
 		return dir, fmt.Errorf("error cloning repo %s: %s", repo, err)
 	}

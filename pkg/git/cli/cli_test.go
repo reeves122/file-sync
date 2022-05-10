@@ -10,15 +10,17 @@ import (
 	"testing"
 )
 
-const fixtureGitRepo = "https://github.com/git-fixtures/basic.git"
-const fixtureGitRepoInvalid = "https://localhost/not-a-repo"
+const fixtureGitRepo = "git-fixtures/basic.git"
+const fixtureGitRepoInvalid = "localhost/not-a-repo"
+
+var token = os.Getenv("GITHUB_TOKEN")
 
 func init() {
 	log.SetLevel(log.DebugLevel)
 }
 
 func Test_Clone_Success(t *testing.T) {
-	repoDir, err := Clone(fixtureGitRepo)
+	repoDir, err := CloneFromGitHub(fixtureGitRepo, token)
 	defer common.RemoveDir(repoDir)
 	if err != nil {
 		panic(err)
@@ -32,13 +34,13 @@ func Test_Clone_Success(t *testing.T) {
 }
 
 func Test_Clone_Error(t *testing.T) {
-	repoDir, err := Clone(fixtureGitRepoInvalid)
+	repoDir, err := CloneFromGitHub(fixtureGitRepoInvalid, token)
 	defer common.RemoveDir(repoDir)
-	assert.Contains(t, err.Error(), "unable to access")
+	assert.Contains(t, err.Error(), "error cloning repo")
 }
 
 func Test_Fetch_Success(t *testing.T) {
-	repoDir, err := Clone(fixtureGitRepo)
+	repoDir, err := CloneFromGitHub(fixtureGitRepo, token)
 	defer common.RemoveDir(repoDir)
 	if err != nil {
 		panic(err)
@@ -49,7 +51,7 @@ func Test_Fetch_Success(t *testing.T) {
 }
 
 func Test_Fetch_Error(t *testing.T) {
-	repoDir, err := Clone(fixtureGitRepoInvalid)
+	repoDir, err := CloneFromGitHub(fixtureGitRepoInvalid, token)
 	defer common.RemoveDir(repoDir)
 
 	err = Fetch(repoDir)
@@ -57,7 +59,7 @@ func Test_Fetch_Error(t *testing.T) {
 }
 
 func Test_Branch_Success(t *testing.T) {
-	repoDir, err := Clone(fixtureGitRepo)
+	repoDir, err := CloneFromGitHub(fixtureGitRepo, token)
 	defer common.RemoveDir(repoDir)
 	if err != nil {
 		panic(err)
@@ -66,18 +68,18 @@ func Test_Branch_Success(t *testing.T) {
 	assert.NoError(t, err)
 }
 
-func Test_Branch_Error(t *testing.T) {
-	repoDir, err := Clone(fixtureGitRepo)
+func Test_Branch_Exists(t *testing.T) {
+	repoDir, err := CloneFromGitHub(fixtureGitRepo, token)
 	defer common.RemoveDir(repoDir)
 	if err != nil {
 		panic(err)
 	}
 	err = Branch(repoDir, "master")
-	assert.Contains(t, err.Error(), "already exists")
+	assert.NoError(t, err)
 }
 
 func Test_Checkout_Success(t *testing.T) {
-	repoDir, err := Clone(fixtureGitRepo)
+	repoDir, err := CloneFromGitHub(fixtureGitRepo, token)
 	defer common.RemoveDir(repoDir)
 	if err != nil {
 		panic(err)
@@ -96,7 +98,7 @@ func Test_Checkout_Success(t *testing.T) {
 }
 
 func Test_Checkout_Error(t *testing.T) {
-	repoDir, err := Clone(fixtureGitRepo)
+	repoDir, err := CloneFromGitHub(fixtureGitRepo, token)
 	defer common.RemoveDir(repoDir)
 	if err != nil {
 		panic(err)
@@ -107,7 +109,7 @@ func Test_Checkout_Error(t *testing.T) {
 }
 
 func Test_Status_Clean(t *testing.T) {
-	repoDir, err := Clone(fixtureGitRepo)
+	repoDir, err := CloneFromGitHub(fixtureGitRepo, token)
 	defer common.RemoveDir(repoDir)
 	if err != nil {
 		panic(err)
@@ -117,7 +119,7 @@ func Test_Status_Clean(t *testing.T) {
 }
 
 func Test_Status_Modified(t *testing.T) {
-	repoDir, err := Clone(fixtureGitRepo)
+	repoDir, err := CloneFromGitHub(fixtureGitRepo, token)
 	defer common.RemoveDir(repoDir)
 	if err != nil {
 		panic(err)
@@ -129,7 +131,7 @@ func Test_Status_Modified(t *testing.T) {
 }
 
 func Test_Status_Error(t *testing.T) {
-	repoDir, _ := Clone(fixtureGitRepoInvalid)
+	repoDir, _ := CloneFromGitHub(fixtureGitRepoInvalid, token)
 	defer common.RemoveDir(repoDir)
 
 	output := Status(repoDir, "foo")
@@ -137,7 +139,7 @@ func Test_Status_Error(t *testing.T) {
 }
 
 func Test_Add_Success(t *testing.T) {
-	repoDir, err := Clone(fixtureGitRepo)
+	repoDir, err := CloneFromGitHub(fixtureGitRepo, token)
 	defer common.RemoveDir(repoDir)
 	if err != nil {
 		panic(err)
@@ -156,7 +158,7 @@ func Test_Add_Success(t *testing.T) {
 }
 
 func Test_Add_Error(t *testing.T) {
-	repoDir, err := Clone(fixtureGitRepo)
+	repoDir, err := CloneFromGitHub(fixtureGitRepo, token)
 	defer common.RemoveDir(repoDir)
 	if err != nil {
 		panic(err)
@@ -167,7 +169,7 @@ func Test_Add_Error(t *testing.T) {
 }
 
 func Test_Commit_Success(t *testing.T) {
-	repoDir, err := Clone(fixtureGitRepo)
+	repoDir, err := CloneFromGitHub(fixtureGitRepo, token)
 	defer common.RemoveDir(repoDir)
 	if err != nil {
 		panic(err)
@@ -193,7 +195,7 @@ func Test_Commit_Success(t *testing.T) {
 }
 
 func Test_Commit_Clean(t *testing.T) {
-	repoDir, err := Clone(fixtureGitRepo)
+	repoDir, err := CloneFromGitHub(fixtureGitRepo, token)
 	defer common.RemoveDir(repoDir)
 	if err != nil {
 		panic(err)
@@ -209,7 +211,7 @@ func Test_Commit_Clean(t *testing.T) {
 }
 
 func Test_Commit_Error(t *testing.T) {
-	repoDir, err := Clone(fixtureGitRepoInvalid)
+	repoDir, err := CloneFromGitHub(fixtureGitRepoInvalid, token)
 	defer common.RemoveDir(repoDir)
 
 	err = Commit(repoDir, "test commit")
@@ -217,7 +219,7 @@ func Test_Commit_Error(t *testing.T) {
 }
 
 func Test_Push_Success(t *testing.T) {
-	rootRepoDir, err := Clone(fixtureGitRepo)
+	rootRepoDir, err := CloneFromGitHub(fixtureGitRepo, token)
 	defer common.RemoveDir(rootRepoDir)
 	if err != nil {
 		panic(err)
@@ -264,7 +266,7 @@ func Test_Push_Success(t *testing.T) {
 }
 
 func Test_Push_Error(t *testing.T) {
-	repoDir, err := Clone(fixtureGitRepo)
+	repoDir, err := CloneFromGitHub(fixtureGitRepo, token)
 	defer common.RemoveDir(repoDir)
 	if err != nil {
 		panic(err)
@@ -275,7 +277,7 @@ func Test_Push_Error(t *testing.T) {
 }
 
 func Test_SetAuthor_Success(t *testing.T) {
-	repoDir, err := Clone(fixtureGitRepo)
+	repoDir, err := CloneFromGitHub(fixtureGitRepo, token)
 	defer common.RemoveDir(repoDir)
 
 	err = SetAuthor(repoDir, "testuser", "testuser@example.com")
@@ -283,7 +285,7 @@ func Test_SetAuthor_Success(t *testing.T) {
 }
 
 func Test_SetAuthor_Error(t *testing.T) {
-	repoDir, err := Clone(fixtureGitRepoInvalid)
+	repoDir, err := CloneFromGitHub(fixtureGitRepoInvalid, token)
 	defer common.RemoveDir(repoDir)
 
 	err = SetAuthor(repoDir, "testuser", "testuser@example.com")
@@ -291,7 +293,7 @@ func Test_SetAuthor_Error(t *testing.T) {
 }
 
 func Test_AnyModified_Clean(t *testing.T) {
-	repoDir, err := Clone(fixtureGitRepo)
+	repoDir, err := CloneFromGitHub(fixtureGitRepo, token)
 	defer common.RemoveDir(repoDir)
 	if err != nil {
 		panic(err)
@@ -301,7 +303,7 @@ func Test_AnyModified_Clean(t *testing.T) {
 }
 
 func Test_AnyModified_Modified(t *testing.T) {
-	repoDir, err := Clone(fixtureGitRepo)
+	repoDir, err := CloneFromGitHub(fixtureGitRepo, token)
 	defer common.RemoveDir(repoDir)
 	if err != nil {
 		panic(err)
@@ -316,7 +318,7 @@ func Test_AnyModified_Modified(t *testing.T) {
 }
 
 func Test_Reset_Success(t *testing.T) {
-	repoDir, err := Clone(fixtureGitRepo)
+	repoDir, err := CloneFromGitHub(fixtureGitRepo, token)
 	defer common.RemoveDir(repoDir)
 	if err != nil {
 		panic(err)
@@ -327,7 +329,7 @@ func Test_Reset_Success(t *testing.T) {
 }
 
 func Test_Reset_Invalid(t *testing.T) {
-	repoDir, err := Clone(fixtureGitRepo)
+	repoDir, err := CloneFromGitHub(fixtureGitRepo, token)
 	defer common.RemoveDir(repoDir)
 	if err != nil {
 		panic(err)
@@ -338,7 +340,7 @@ func Test_Reset_Invalid(t *testing.T) {
 }
 
 func Test_Reset_Error(t *testing.T) {
-	repoDir, _ := Clone(fixtureGitRepoInvalid)
+	repoDir, _ := CloneFromGitHub(fixtureGitRepoInvalid, token)
 	defer common.RemoveDir(repoDir)
 
 	err := Reset(repoDir, "foo")
