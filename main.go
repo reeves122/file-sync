@@ -64,29 +64,23 @@ func main() {
 
 	if modified := cli.AnyModified(workingDir, files); modified == false {
 		log.Info("all files are up to date")
-		os.Exit(0)
-	}
-
-	for _, f := range files {
-		err = cli.Add(workingDir, f)
-		if err != nil {
-			panic(err)
+	} else {
+		for _, f := range files {
+			err = cli.Add(workingDir, f)
+			if err != nil {
+				panic(err)
+			}
 		}
-	}
 
-	err = cli.Commit(workingDir, commitMsg)
-	if err != nil {
-		log.Fatal(err)
-	}
+		err = cli.Commit(workingDir, commitMsg)
+		if err != nil {
+			log.Fatal(err)
+		}
 
-	_, err = common.RunCommand(workingDir, "git", "remote", "-v")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	err = cli.Push(workingDir, branchName)
-	if err != nil {
-		log.Fatal(err)
+		err = cli.Push(workingDir, branchName)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 
 	client := github.GetClient(token)
