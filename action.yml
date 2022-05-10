@@ -3,6 +3,9 @@ inputs:
   token:
     description: 'access token'
     required: false
+  files:
+    description: 'list of files'
+    required: false
 runs:
   using: 'docker'
   image: 'Dockerfile'

@@ -13,3 +13,7 @@ jobs:
       - uses: reeves122/file-sync@e4d8ec27d52339cfcabf69679f8e6853d714fe31
         with:
           token: ${{ secrets.FILE_SYNC_PAT }}
+          files: |
+            file1=foo1
+            file2=foo2
+            file3=foo3

@@ -29,13 +29,17 @@ func main() {
 	repo := common.GetRepo()
 	//repo := os.Getenv("GITHUB_REPOSITORY")
 	token := os.Getenv("INPUT_TOKEN")
+	fileList := os.Getenv("INPUT_FILES")
+	workingDir := os.Getenv("GITHUB_WORKSPACE")
+	log.Info("GITHUB_WORKSPACE", workingDir)
+	log.Info("files", fileList)
 
-	_, err := common.RunCommand(localRepoDir, "pwd")
+	_, err := common.RunCommand(workingDir, "pwd")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	_, err = common.RunCommand(localRepoDir, "ls", "-la")
+	_, err = common.RunCommand(workingDir, "ls", "-la")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -50,58 +54,58 @@ func main() {
 	//	log.Fatal(err)
 	//}
 
-	err = cli.SetAuthor(localRepoDir, user, email)
+	err = cli.SetAuthor(workingDir, user, email)
 	if err != nil {
 		panic(err)
 	}
 
-	err = cli.Fetch(localRepoDir)
+	err = cli.Fetch(workingDir)
 	if err != nil {
 		panic(err)
 	}
 
-	err = cli.Branch(localRepoDir, branchName)
+	err = cli.Branch(workingDir, branchName)
 	if err != nil {
 		panic(err)
 	}
 
-	err = cli.Checkout(localRepoDir, branchName)
+	err = cli.Checkout(workingDir, branchName)
 	if err != nil {
 		panic(err)
 	}
 
-	err = cli.Reset(localRepoDir, branchName)
+	err = cli.Reset(workingDir, branchName)
 	if err != nil {
 		panic(err)
 	}
 
-	if err := common.CopySourceFiles(files, sourceDir, localRepoDir); err != nil {
+	if err := common.CopySourceFiles(files, sourceDir, workingDir); err != nil {
 		log.Fatal(err)
 	}
 
-	if modified := cli.AnyModified(localRepoDir, files); modified == false {
+	if modified := cli.AnyModified(workingDir, files); modified == false {
 		log.Info("all files are up to date")
 		os.Exit(0)
 	}
 
 	for _, f := range files {
-		err = cli.Add(localRepoDir, f)
+		err = cli.Add(workingDir, f)
 		if err != nil {
 			panic(err)
 		}
 	}
 
-	err = cli.Commit(localRepoDir, commitMsg)
+	err = cli.Commit(workingDir, commitMsg)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	_, err = common.RunCommand(localRepoDir, "git", "remote", "-v")
+	_, err = common.RunCommand(workingDir, "git", "remote", "-v")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	err = cli.Push(localRepoDir, branchName)
+	err = cli.Push(workingDir, branchName)
 	if err != nil {
 		log.Fatal(err)
 	}
