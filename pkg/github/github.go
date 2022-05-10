@@ -14,11 +14,11 @@ func GetClient(token string) *github.Client {
 	return github.NewClient(httpClient)
 }
 
-func CreatePullRequest(client *github.Client) error {
-	_, _, err := client.PullRequests.Create(context.Background(), "reeves122", "file-sync", &github.NewPullRequest{
-		Title: github.String("file sync"),
-		Head:  github.String("file-sync"),
-		Base:  github.String("main"),
+func CreatePullRequest(client *github.Client, owner, repo, title, head, base string) error {
+	_, _, err := client.PullRequests.Create(context.Background(), owner, repo, &github.NewPullRequest{
+		Title: github.String(title),
+		Head:  github.String(head),
+		Base:  github.String(base),
 	})
 	if err != nil {
 		return err
