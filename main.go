@@ -30,7 +30,12 @@ func main() {
 	//repo := os.Getenv("GITHUB_REPOSITORY")
 	token := os.Getenv("INPUT_TOKEN")
 
-	_, err := common.RunCommand(localRepoDir, "ls", "-l")
+	_, err := common.RunCommand(localRepoDir, "pwd")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	_, err = common.RunCommand(localRepoDir, "ls", "-la")
 	if err != nil {
 		log.Fatal(err)
 	}
