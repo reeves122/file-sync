@@ -78,6 +78,13 @@ func Test_Branch_Exists(t *testing.T) {
 	assert.NoError(t, err)
 }
 
+func Test_Branch_Error(t *testing.T) {
+	repoDir, err := CloneFromGitHub(fixtureGitRepoInvalid, token)
+	defer common.RemoveDir(repoDir)
+	err = Branch(repoDir, "test")
+	assert.Error(t, err)
+}
+
 func Test_Checkout_Success(t *testing.T) {
 	repoDir, err := CloneFromGitHub(fixtureGitRepo, token)
 	defer common.RemoveDir(repoDir)

@@ -17,7 +17,7 @@ func GetClient(token string) *github.Client {
 }
 
 func CreatePullRequest(client *github.Client, owner, repo, title, head, base string) error {
-	log.Info("creating pull request for %s -> %s", head, base)
+	log.Infof("creating pull request for %s -> %s", head, base)
 	_, _, err := client.PullRequests.Create(context.Background(), owner, repo, &github.NewPullRequest{
 		Title: github.String(title),
 		Head:  github.String(head),

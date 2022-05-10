@@ -106,6 +106,18 @@ func Test_RunCommand_Error(t *testing.T) {
 	assert.Error(t, err)
 }
 
+func Test_RunCommandNoLog_Success(t *testing.T) {
+	dir, _ := ioutil.TempDir("", "test")
+	err := RunCommandNoLog(dir, "echo", "foo")
+	assert.NoError(t, err)
+}
+
+func Test_RunCommandNoLog_Error(t *testing.T) {
+	dir, _ := ioutil.TempDir("", "test")
+	err := RunCommandNoLog(dir, "foo", "foo")
+	assert.Error(t, err)
+}
+
 func Test_LogCommand(t *testing.T) {
 	assert.NotPanics(t, func() {
 		LogCommand("cd", "foo")
