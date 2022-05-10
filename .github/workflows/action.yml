@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: reeves122/file-sync@30ae55029b95b6048cb8ba34c193cc9490527f63
+      - uses: reeves122/file-sync@aed3fa2f9813988c5aa7f025ba89d07c84a2bd72
         with:
           token: ${{ secrets.FILE_SYNC_PAT }}
           repo: champ-oss/terraform-module-template
