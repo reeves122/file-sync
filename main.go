@@ -23,7 +23,7 @@ func main() {
 	email := config.GetEmail()
 	commitMsg := config.GetCommitMessage()
 
-	sourceDir, err := cli.Clone(sourceRepo, token)
+	sourceDir, err := cli.CloneFromGitHub(sourceRepo, token)
 	if err != nil {
 		log.Fatal(err)
 	}
