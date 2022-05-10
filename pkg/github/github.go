@@ -25,6 +25,9 @@ func CreatePullRequest(client *github.Client, owner, repo, title, head, base str
 		if strings.Contains(err.Error(), "A pull request already exists") {
 			return nil
 		}
+		if strings.Contains(err.Error(), "Field:head Code:invalid Message") {
+			return nil
+		}
 		return err
 	}
 	return nil
