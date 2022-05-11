@@ -219,10 +219,10 @@ func Test_Commit_Clean(t *testing.T) {
 }
 
 func Test_Commit_Error(t *testing.T) {
-	repoDir, err := CloneFromGitHub(fixtureGitRepoInvalid, token)
+	repoDir, _ := CloneFromGitHub(fixtureGitRepoInvalid, token)
 	defer common.RemoveDir(repoDir)
 
-	err = Commit(repoDir, "test commit")
+	err := Commit(repoDir, "test commit")
 	assert.Contains(t, err.Error(), "not a git repository")
 }
 
@@ -287,16 +287,19 @@ func Test_Push_Error(t *testing.T) {
 func Test_SetAuthor_Success(t *testing.T) {
 	repoDir, err := CloneFromGitHub(fixtureGitRepo, token)
 	defer common.RemoveDir(repoDir)
+	if err != nil {
+		panic(err)
+	}
 
 	err = SetAuthor(repoDir, "testuser", "testuser@example.com")
 	assert.Nil(t, err)
 }
 
 func Test_SetAuthor_Error(t *testing.T) {
-	repoDir, err := CloneFromGitHub(fixtureGitRepoInvalid, token)
+	repoDir, _ := CloneFromGitHub(fixtureGitRepoInvalid, token)
 	defer common.RemoveDir(repoDir)
 
-	err = SetAuthor(repoDir, "testuser", "testuser@example.com")
+	err := SetAuthor(repoDir, "testuser", "testuser@example.com")
 	assert.Contains(t, err.Error(), "not in a git directory")
 }
 

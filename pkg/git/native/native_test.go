@@ -10,8 +10,6 @@ import (
 	"testing"
 )
 
-const localRepoDir = "./"
-
 func Test_cloneSourceRepo_Success(t *testing.T) {
 	repoDir, err := cloneSourceRepo("https://github.com/git-fixtures/basic.git")
 	defer common.RemoveDir(repoDir)
@@ -185,12 +183,32 @@ func Test_createCommit_Success(t *testing.T) {
 }
 
 func Test_gitPush_Success(t *testing.T) {
-	repoDir, err := cloneSourceRepo("https://github.com/git-fixtures/basic.git")
+	rootRepoDir, err := cloneSourceRepo("https://github.com/git-fixtures/basic.git")
+	defer common.RemoveDir(rootRepoDir)
+	assert.NoError(t, err)
+
+	repoDir, err := cloneSourceRepo(rootRepoDir)
 	defer common.RemoveDir(repoDir)
 	assert.NoError(t, err)
+
 	repo, err := openLocalRepo(repoDir)
 	assert.NoError(t, err)
+
 	worktree, err := repo.Worktree()
+	assert.NoError(t, checkOutBranch(worktree, "foo"))
+
+	// Write a new file in the git repository
+	err = ioutil.WriteFile(filepath.Join(repoDir, "foo-new-file.txt"), []byte("test"), 0644)
 	assert.NoError(t, err)
-	assert.NotNil(t, worktree)
+
+	// Git add and commit
+	assert.NoError(t, err)
+	assert.NoError(t, gitAddFiles([]string{"foo-new-file.txt"}, worktree))
+
+	hash, err := createCommit(worktree, "test commit", "example-user", "example-user@example.com")
+	assert.NoError(t, err)
+	assert.Len(t, hash.String(), 40)
+
+	err = gitPush(repo, "testuser", "testpassword")
+	assert.NoError(t, err)
 }
