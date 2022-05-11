@@ -9,7 +9,7 @@ import (
 )
 
 func CloneFromGitHub(repo string, token string) (dir string, err error) {
-	log.Infof("Cloning repository %s to %s", repo, dir)
+	log.Infof("Cloning repository: %s", repo)
 	repoWithToken := fmt.Sprintf("https://%s@github.com/%s", token, repo)
 	dir, err = Clone(repoWithToken)
 	if err != nil {
