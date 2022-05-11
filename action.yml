@@ -1,0 +1,48 @@
+name: 'file-sync'
+inputs:
+  token:
+    description: 'GitHub Token or PAT'
+    required: false
+    default: ''
+  repo:
+    description: 'Source GitHub repo'
+    required: true
+  files:
+    description: 'List of files to sync'
+    required: true
+  target-branch:
+    description: 'Target branch for pull request'
+    required: false
+    default: 'main'
+  pull-request-branch:
+    description: 'Branch to push changes'
+    required: false
+    default: 'file-sync'
+  user:
+    description: 'Git username'
+    required: false
+    default: 'file-sync'
+  email:
+    description: 'Git email'
+    required: false
+    default: '41898282+github-actions[bot]@users.noreply.github.com'
+  commit-message:
+    description: 'Commit message to use when updating files'
+    required: false
+    default: 'Updated by file-sync'
+
+runs:
+  using: "composite"
+  steps:
+    - run: go run main.go
+      working-directory: ${{ github.action_path }}
+      shell: bash
+      env:
+        INPUT_TOKEN: ${{ inputs.token }}
+        INPUT_REPO: ${{ inputs.repo }}
+        INPUT_FILES: ${{ inputs.files }}
+        INPUT_TARGET_BRANCH: ${{ inputs.target-branch }}
+        INPUT_PULL_REQUEST_BRANCH: ${{ inputs.pull-request-branch }}
+        INPUT_USER: ${{ inputs.user }}
+        INPUT_EMAIL: ${{ inputs.email }}
+        INPUT_COMMIT_MESSAGE: ${{ inputs.commit-message }}
