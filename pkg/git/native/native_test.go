@@ -31,6 +31,9 @@ func Test_cloneSourceRepo_Error(t *testing.T) {
 func Test_openLocalRepo_Success(t *testing.T) {
 	repoDir, err := cloneSourceRepo("https://github.com/git-fixtures/basic.git")
 	defer common.RemoveDir(repoDir)
+	if err != nil {
+		panic(err)
+	}
 
 	repo, err := openLocalRepo(repoDir)
 	assert.NoError(t, err)
@@ -47,8 +50,13 @@ func Test_isWorktreeModified_Modified(t *testing.T) {
 	// Clone and open an example git repository
 	repoDir, err := cloneSourceRepo("https://github.com/git-fixtures/basic.git")
 	defer common.RemoveDir(repoDir)
+	if err != nil {
+		panic(err)
+	}
 	repo, err := openLocalRepo(repoDir)
-	assert.NoError(t, err)
+	if err != nil {
+		panic(err)
+	}
 
 	// Write modifications to an existing file in the git repository
 	err = ioutil.WriteFile(filepath.Join(repoDir, "LICENSE"), []byte("test"), 0644)
