@@ -57,7 +57,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	if modified := cli.AnyModified(workspace, files); modified == false {
+	if modified := cli.AnyModified(workspace, files); !modified {
 		log.Info("all files are up to date")
 	} else {
 		for _, f := range files {

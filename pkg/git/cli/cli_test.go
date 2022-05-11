@@ -51,10 +51,10 @@ func Test_Fetch_Success(t *testing.T) {
 }
 
 func Test_Fetch_Error(t *testing.T) {
-	repoDir, err := CloneFromGitHub(fixtureGitRepoInvalid, token)
+	repoDir, _ := CloneFromGitHub(fixtureGitRepoInvalid, token)
 	defer common.RemoveDir(repoDir)
 
-	err = Fetch(repoDir)
+	err := Fetch(repoDir)
 	assert.Contains(t, err.Error(), "not a git repository")
 }
 
@@ -79,9 +79,9 @@ func Test_Branch_Exists(t *testing.T) {
 }
 
 func Test_Branch_Error(t *testing.T) {
-	repoDir, err := CloneFromGitHub(fixtureGitRepoInvalid, token)
+	repoDir, _ := CloneFromGitHub(fixtureGitRepoInvalid, token)
 	defer common.RemoveDir(repoDir)
-	err = Branch(repoDir, "test")
+	err := Branch(repoDir, "test")
 	assert.Error(t, err)
 }
 
@@ -135,6 +135,7 @@ func Test_Status_Modified(t *testing.T) {
 	err = ioutil.WriteFile(filepath.Join(repoDir, "LICENSE"), []byte("test"), 0644)
 	output := Status(repoDir, "LICENSE")
 	assert.Equal(t, " M LICENSE\n", output)
+	assert.Nil(t, err)
 }
 
 func Test_Status_Error(t *testing.T) {

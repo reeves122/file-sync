@@ -105,7 +105,6 @@ func createCommit(worktree *git.Worktree, msg, name, email string) (plumbing.Has
 func gitPush(repo *git.Repository, username, password string) error {
 	log.Info("Running git push")
 	err := repo.Push(&git.PushOptions{
-		//Force:    true,
 		Progress: os.Stdout,
 		Auth: &http.BasicAuth{
 			Username: username,
