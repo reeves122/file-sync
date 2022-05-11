@@ -220,6 +220,7 @@ func Test_createCommit_Success(t *testing.T) {
 	assert.Equal(t, "test commit", commit.Message)
 	assert.Equal(t, "example-user", commit.Author.Name)
 	assert.Equal(t, "example-user@example.com", commit.Author.Email)
+	assert.NoError(t, err)
 }
 
 func Test_gitPush_Success(t *testing.T) {
@@ -236,10 +237,15 @@ func Test_gitPush_Success(t *testing.T) {
 	}
 
 	repo, err := openLocalRepo(repoDir)
-	assert.NoError(t, err)
+	if err != nil {
+		panic(err)
+	}
 
 	worktree, err := repo.Worktree()
 	assert.NoError(t, checkOutBranch(worktree, "foo"))
+	if err != nil {
+		panic(err)
+	}
 
 	// Write a new file in the git repository
 	err = ioutil.WriteFile(filepath.Join(repoDir, "foo-new-file.txt"), []byte("test"), 0644)
