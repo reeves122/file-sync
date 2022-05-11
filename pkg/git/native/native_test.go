@@ -2,7 +2,6 @@ package native
 
 import (
 	"github.com/champ-oss/file-sync/pkg/common"
-	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"os"
@@ -74,8 +73,13 @@ func Test_isWorktreeModified_New(t *testing.T) {
 	// Clone and open an example git repository
 	repoDir, err := cloneSourceRepo("https://github.com/git-fixtures/basic.git")
 	defer common.RemoveDir(repoDir)
+	if err != nil {
+		panic(err)
+	}
 	repo, err := openLocalRepo(repoDir)
-	assert.NoError(t, err)
+	if err != nil {
+		panic(err)
+	}
 
 	// Write a new file in the git repository
 	err = ioutil.WriteFile(filepath.Join(repoDir, "foo-new-file.txt"), []byte("test"), 0644)
@@ -92,8 +96,13 @@ func Test_isWorktreeModified_New(t *testing.T) {
 func Test_isWorktreeModified_Clean(t *testing.T) {
 	repoDir, err := cloneSourceRepo("https://github.com/git-fixtures/basic.git")
 	defer common.RemoveDir(repoDir)
+	if err != nil {
+		panic(err)
+	}
 	repo, err := openLocalRepo(repoDir)
-	assert.NoError(t, err)
+	if err != nil {
+		panic(err)
+	}
 
 	worktree, err := repo.Worktree()
 	assert.NoError(t, err)
@@ -106,9 +115,12 @@ func Test_isWorktreeModified_Clean(t *testing.T) {
 func Test_checkOutBranch_New(t *testing.T) {
 	repoDir, err := cloneSourceRepo("https://github.com/git-fixtures/basic.git")
 	defer common.RemoveDir(repoDir)
+	if err != nil {
+		panic(err)
+	}
 	repo, err := openLocalRepo(repoDir)
 	if err != nil {
-		log.Fatalf("error opening local directory as git repository \n%s", err)
+		panic(err)
 	}
 
 	worktree, err := repo.Worktree()
@@ -122,9 +134,12 @@ func Test_checkOutBranch_New(t *testing.T) {
 func Test_checkOutBranch_Existing(t *testing.T) {
 	repoDir, err := cloneSourceRepo("https://github.com/git-fixtures/basic.git")
 	defer common.RemoveDir(repoDir)
+	if err != nil {
+		panic(err)
+	}
 	repo, err := openLocalRepo(repoDir)
 	if err != nil {
-		log.Fatalf("error opening local directory as git repository \n%s", err)
+		panic(err)
 	}
 
 	worktree, err := repo.Worktree()
@@ -139,8 +154,13 @@ func Test_gitAddFiles_Success(t *testing.T) {
 	// Clone and open an example git repository
 	repoDir, err := cloneSourceRepo("https://github.com/git-fixtures/basic.git")
 	defer common.RemoveDir(repoDir)
+	if err != nil {
+		panic(err)
+	}
 	repo, err := openLocalRepo(repoDir)
-	assert.NoError(t, err)
+	if err != nil {
+		panic(err)
+	}
 
 	// Write a new file in the git repository
 	err = ioutil.WriteFile(filepath.Join(repoDir, "foo-new-file.txt"), []byte("test"), 0644)
@@ -155,8 +175,13 @@ func Test_gitAddFiles_Error(t *testing.T) {
 	// Clone and open an example git repository
 	repoDir, err := cloneSourceRepo("https://github.com/git-fixtures/basic.git")
 	defer common.RemoveDir(repoDir)
+	if err != nil {
+		panic(err)
+	}
 	repo, err := openLocalRepo(repoDir)
-	assert.NoError(t, err)
+	if err != nil {
+		panic(err)
+	}
 
 	worktree, err := repo.Worktree()
 	assert.NoError(t, err)
@@ -167,12 +192,19 @@ func Test_createCommit_Success(t *testing.T) {
 	// Clone and open an example git repository
 	repoDir, err := cloneSourceRepo("https://github.com/git-fixtures/basic.git")
 	defer common.RemoveDir(repoDir)
+	if err != nil {
+		panic(err)
+	}
 	repo, err := openLocalRepo(repoDir)
-	assert.NoError(t, err)
+	if err != nil {
+		panic(err)
+	}
 
 	// Write a new file in the git repository
 	err = ioutil.WriteFile(filepath.Join(repoDir, "foo-new-file.txt"), []byte("test"), 0644)
-	assert.NoError(t, err)
+	if err != nil {
+		panic(err)
+	}
 
 	// Git add and commit
 	worktree, err := repo.Worktree()
@@ -193,11 +225,15 @@ func Test_createCommit_Success(t *testing.T) {
 func Test_gitPush_Success(t *testing.T) {
 	rootRepoDir, err := cloneSourceRepo("https://github.com/git-fixtures/basic.git")
 	defer common.RemoveDir(rootRepoDir)
-	assert.NoError(t, err)
+	if err != nil {
+		panic(err)
+	}
 
 	repoDir, err := cloneSourceRepo(rootRepoDir)
 	defer common.RemoveDir(repoDir)
-	assert.NoError(t, err)
+	if err != nil {
+		panic(err)
+	}
 
 	repo, err := openLocalRepo(repoDir)
 	assert.NoError(t, err)
